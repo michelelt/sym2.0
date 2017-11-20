@@ -26,8 +26,11 @@ CorrectiveFactor = 1#.88
 shiftLat500m = 0.0045
 shiftLon500m = 0.00637
 
-shiftLat250m = shiftLat500m/2
-shiftLon250m = shiftLon500m/2
+'''
+add /2 in order to have a zonization 250x250
+'''
+shiftLat250m = shiftLat500m
+shiftLon250m = shiftLon500m
 
 
 NColumns = int((MaxLon-minLon)/shiftLon250m)
@@ -39,11 +42,13 @@ ShiftLon = (MaxLon-minLon)/NColumns
 ShiftLat = (MaxLat-minLat)/Nrows
 
 
-
-CaselleMaxLat = CaselleCentralLat + shiftLat250m/2
-CaselleMaxLon = CaselleCentralLon + shiftLon250m/2
-CaselleminLat = CaselleCentralLat - shiftLat250m/2
-CaselleminLon = CaselleCentralLon + shiftLon250m/2
+'''
+add /2 in order to have a zonization 250x250
+'''
+CaselleMaxLat = CaselleCentralLat + shiftLat250m
+CaselleMaxLon = CaselleCentralLon + shiftLon250m
+CaselleminLat = CaselleCentralLat - shiftLat250m
+CaselleminLon = CaselleCentralLon + shiftLon250m
 
 provider="enjoy"
 
