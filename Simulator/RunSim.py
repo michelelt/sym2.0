@@ -13,6 +13,9 @@ from Simulator.Globals.SupportFunctions import *
 import datetime
 import click
 
+countNoRech = {}
+
+
 def SearchAvailableCar(ZoneI):
 
     SelectedCar = "" 
@@ -67,7 +70,7 @@ def ParkCar(BookingEndPosition,BookedCar, tankThreshold, walkingTreshold):
                     Found = ZoneI.getParkingAtRechargingStations(BookedCar)
                     if(Found): 
                         Recharged = True
-                        countNoRech[zoneI.ID] +=1
+                        countNoRech[ZoneI.ID] +=1
                         return Lvl, ToRecharge, Recharged, Distance, WT_exceed       
 
     ''' leave the car in the first zone '''
@@ -152,7 +155,7 @@ def main():
     algorithm = "rnd"
     tot_deaths = 0
 
-    countNoRech = []
+    # countNoRech = {}
 
     #BookingID_Car = load()
     a = datetime.datetime.now()
@@ -165,8 +168,9 @@ def main():
     global RechargingStation_Zones
     numberOfStations = 60
     RechargingStation_Zones = loadRecharing(algorithm, provider, numberOfStations)
-    for zoneI in RechargingStation_Zones:
-        countNoRech[zone.ID] = 0
+    for ZoneI in RechargingStation_Zones:
+        countNoRech[int(ZoneI[0])] = 0
+
 
 
     b = datetime.datetime.now()    
@@ -224,10 +228,7 @@ def main():
                     NearestCar.setStartPosition(Event.coordinates)
                     BookingID_Car[BookingID] = NearestCar
                     Lvl = NearestCar.getBatteryLvl()
-                    if (Lvl ==0):
-                        tot_deaths = tot_deaths +1
-                    if (Lvl <0):
-                        print ("lvl < 0")
+
                     ID = NearestCar.getID()
                     ZoneC = zoneIDtoCoordinates(ZoneID)
                     d={"Type":"s",
@@ -266,11 +267,6 @@ def main():
                     del BookingID_Car[Event.id_booking]
                     # fout.write("e;%s;%s;%d;%d;%d;%f;%d"%(ToRecharge, Recharged, ID, Lvl,Distance, Discarge, TripDistance)+"\n")
 
-                    if (Lvl ==0):
-                        tot_deaths = tot_deaths +1
-                    if (Lvl <0):
-                        print ("lvl < 0")
-
                     d={"Type":"e",
                     "ToRecharge":ToRecharge,
                     "Recharged":Recharged,
@@ -289,7 +285,7 @@ def main():
                     fout.write(dict_to_string(d))
 
                     
-            if(i>10000): break
+            # if(i>100): break
 
 
                     
@@ -299,9 +295,9 @@ def main():
     print ("Tot deaths", tot_deaths)
     print("End Simulation: "+str(int(c)))
     fStationsStats = open("../output/stationsStats.txt","w")
-    f.write("ID;NoOfRecharing")
-    for station in Stations:
-        f.write(station.toString())
+    fStationsStats.write("ID;NoOfRecharing")
+    for stationID in countNoRech.keys():
+        fStationsStats.write(str(stationID)+";"+str(countNoRech[station]))
     
                 
     # return

@@ -14,9 +14,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 parametersDict = {}
-csvfilePath = p+"/output/walk2.txt"
+csvfilePath = p + "/output/walk2.txt"
+cs_usage = p + "/output/stationsStats.txt"
 
 data = pd.read_csv(csvfilePath, skiprows=[0,1,2,3,4,5], header=0, sep=";")
+cs_usage = pd.read_csv(cs_usage, header=0, sep=",")
 
 
 ### plot the distance missmatch in start and end ###
