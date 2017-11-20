@@ -1,0 +1,7 @@
+events/*
+input/*
+Old_Stuff/*
+output/*
+__pycache__/*
+.project
+.pydevproject

@@ -1,0 +1,16 @@
+Metriche:
+-quanto cammina un utente sia in start, sia in arriving
+-CDF quantità di carica 
+-Carica non soddisfatta (quanti dovrebbero parcheggiare a più di 2km)
+-Posizione iniziale/finale
+
+Parametri
+-Numero di zone
+-Numero di paline per zona
+-Velocità di carica
+-Numero di auto
+-Numero di zone con paline
+-Threshold massima distanza per lasciare la macchina
+-Thresold serbatioio
+-poszionamento iniziale auto
+-Lunghezza traccia
