@@ -17,31 +17,29 @@ class Zone(object):
         self.AvaiableChargingStations = 6
         self.ID = ID
         self.Cars = cars
-        self.RechargedCars = []
-        self.NoOfRech = 0
+        self.RechargedCars = []        
         return
-    
-    '''
-    RETURN THE MOST CHARGED CAR BETWEEN THE CHARGING ONES 
-    '''
-    def getBestRechargedCars(self,stamp):
+        
+    def getBestRechargedCars(self,Stamp):
         
         BestCar = ""
+        BestLvl = -1
 
         for CarI in self.RechargedCars:
             if(BestCar == ""):
                 BestCar = CarI    
             else:
-                if(CarI.getBatteryLvl(stamp) > BestCar.getBatteryLvl(stamp)): BestCar = CarI  
+                CarILvl = CarI.getBatteryLvl(Stamp)
+                if(CarILvl > BestLvl): 
+                    BestCar = CarI
+                    BestLvl = CarILvl
     
         if(BestCar != ""): del self.RechargedCars[self.RechargedCars.index(BestCar)]
         
+        
+        
         return BestCar
-
-
-    '''
-    RETURN THE MOST CHARGED CAR among the NOT charing ones 
-    '''
+    
     def getBestCars(self):
         
         BestCar = ""
@@ -55,18 +53,12 @@ class Zone(object):
         if(BestCar != ""): del self.Cars[self.Cars.index(BestCar)]
         return BestCar
     
-    '''
-    Park the car somewhere
-    '''
     def getAnyParking(self,CarToPark):
         
         self.Cars.append(CarToPark)
         
         return
     
-    '''
-    If it is possible, park the car in the rechargnig station, else do nothing
-    '''
     def getParkingAtRechargingStations(self,CarToPark):
         
         if(len(self.RechargedCars) < self.AvaiableChargingStations):
@@ -82,9 +74,3 @@ class Zone(object):
     def getNumCar(self):
         
         return len(self.Cars)
-
-    def incrNoOfRecharging(self):
-        self.NoOfRech +=1
-
-    def toString(self):
-        return str(self.ID)+";"+str(self.NoOfRecharing)

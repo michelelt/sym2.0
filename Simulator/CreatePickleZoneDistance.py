@@ -22,6 +22,7 @@ def EvalDistance(i,j):
     Yj = int(j/NColumns)
     
 
+
     CentalLoni = (Xi+0.5)*ShiftLon+minLon
     CentalLati = (Yi+0.5)*ShiftLat+minLat
     CentalLonj = (Xj+0.5)*ShiftLon+minLon
@@ -67,14 +68,15 @@ def main():
     #baselat = location.latitude
 
 
+    
+
     DictPlates = pickle.load( open( "../input/"+provider+"_plates_appeareance_obj.pkl", "rb" ) )
     for plate in DictPlates:
         CellIndex = coordinates_to_index(DictPlates[plate].coordinates)
         ZoneNumCars[CellIndex]+=1
        
 
-    k = 0
-    ### assegno ad zona un vettore con tutte le macchine parcheggiate ###    
+    k = 0    
     for i in range(0,NColumns*Nrows+1):
         #if(ZoneNumCars[i]>0): print(i,ZoneNumCars[i])
         ZoneDistances[i]={}
@@ -87,7 +89,6 @@ def main():
         
     print(NColumns,Nrows)
 
-    ### zone ID - > [zone_IDs] sorted pr incrasing distnace ###
     for i in range(0,NColumns*Nrows+1):
         for j in range(i,NColumns*Nrows):
             de, dh = EvalDistance(i, j)

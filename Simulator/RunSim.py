@@ -4,7 +4,6 @@ import numpy as np
 import pickle
 import sys
 import os
-import csv
 p = os.path.abspath('..')
 sys.path.append(p+"/")
 
@@ -12,22 +11,20 @@ from Simulator.Globals.GlobalVar import *
 from Simulator.Globals.SupportFunctions import *
 import datetime
 import click
+import csv 
 
-countNoRech = {}
-
-
-def SearchAvailableCar(ZoneI):
+def SearchAvailableCar(ZoneI,Stamp):
 
     SelectedCar = "" 
     if(ZoneI.ID in RechargingStation_Zones):
-        SelectedCar = ZoneI.getBestRechargedCars()
+        SelectedCar = ZoneI.getBestRechargedCars(Stamp)
     if(SelectedCar == ""):
         SelectedCar = ZoneI.getBestCars()
     
     
     return SelectedCar
 
-def SearchNearestBestCar(BookingStarting_Position):
+def SearchNearestBestCar(BookingStarting_Position,Stamp):
        
     SelectedCar = ""
     Distance = -1
@@ -36,7 +33,7 @@ def SearchNearestBestCar(BookingStarting_Position):
         Iter +=1
         RandomZones = DistanceI[1].getZones()
         for ZoneI in RandomZones:                    
-            SelectedCar = SearchAvailableCar(ZoneI)
+            SelectedCar = SearchAvailableCar(ZoneI,Stamp)
             if(SelectedCar != ""):
                 Distance = DistanceI[1].getDistance()
                 return SelectedCar, Distance, ZoneI.ID, Iter
@@ -44,41 +41,33 @@ def SearchNearestBestCar(BookingStarting_Position):
     print("erroreeeee")
     return -1, -1
 
-def ParkCar(BookingEndPosition,BookedCar, tankThreshold, walkingTreshold):
+def ParkCar(BookingEndPosition,BookedCar):
     
     ToRecharge = False
     Recharged = False
     Distance =-1
-    WT_exceed = False
     
     Lvl =BookedCar.getBatteryLvl()
-    ''' oblige car to park in charging station '''
-    if(Lvl < tankThreshold):
+    if(Lvl < 50):
         #print("PROBLEMA: %d"%BookedCar.getBatteryLvl())
         ToRecharge = True
-        '''Search the nearest station under the th'''
         for DistanceI in DistancesFrom_Zone_Ordered[BookingEndPosition]:        
             Distance = DistanceI[1].getDistance()
-            if(Distance > walkingTreshold):
-                WT_exceed = True
-                break
-
-            '''chose randomly one zone in the cs dataset '''
+            if(Distance > 2000): break            
             RandomZones = DistanceI[1].getZones()
             for ZoneI in RandomZones:     
                 if(ZoneI.ID in RechargingStation_Zones):               
                     Found = ZoneI.getParkingAtRechargingStations(BookedCar)
                     if(Found): 
                         Recharged = True
-                        countNoRech[ZoneI.ID] +=1
-                        return Lvl, ToRecharge, Recharged, Distance, WT_exceed       
+                        BookedCar.setInStation()
+                        return Lvl, ToRecharge, Recharged, Distance        
 
-    ''' leave the car in the first zone '''
     for DistanceI in DistancesFrom_Zone_Ordered[BookingEndPosition]:        
         RandomZones = DistanceI[1].getZones()
         for ZoneI in RandomZones:                    
             ZoneI.getAnyParking(BookedCar)
-            return Lvl, ToRecharge, Recharged, 0, WT_exceed
+            return Lvl, ToRecharge, Recharged, 0
 
 
 def loadRecharing(method, provider, numberOfStations):
@@ -137,8 +126,14 @@ def WriteOutHeader(file, parametersDict):
     return
 
 def dict_to_string(myDict):
+    
+    mykeys = ["Type", "ToRecharge", "Recharged","ID","Lvl","Distance",
+    "Iter","Recharge", "StartRecharge", "Stamp","EventCoords",
+    "ZoneC","WT_exceed", "Discharge", "TripDistance"]
+    
+    
     outputString =""
-    for k in myDict.keys():
+    for k in mykeys:
         outputString += str(myDict[k])+";"
 
     outputString = outputString[:-1]
@@ -149,7 +144,6 @@ def dict_to_string(myDict):
 
 def main():
     
-
     tankThreshold = 50 # in [%]
     walkingTreshold = 2000 # in [m]
     algorithm = "rnd"
@@ -168,8 +162,8 @@ def main():
     global RechargingStation_Zones
     numberOfStations = 60
     RechargingStation_Zones = loadRecharing(algorithm, provider, numberOfStations)
-    for ZoneI in RechargingStation_Zones:
-        countNoRech[int(ZoneI[0])] = 0
+    #for ZoneI in RechargingStation_Zones:
+    #    countNoRech[int(ZoneI[0])] = 0
 
 
 
@@ -189,7 +183,6 @@ def main():
 
     #TotalCar1,TotalCar2 = getncar()
     ActualBooking = 0
-
     
 
     #print(TotalCar1,TotalCar2,ActualBooking)
@@ -201,7 +194,8 @@ def main():
     "ChargingStations":numberOfStations, 
     "tankThreshold":tankThreshold,
     "walkingTreshold":  walkingTreshold})
-
+    
+    
     # fout.write("Type;ToRecharge;Recharged;CarID;BatteryLvl;PickDistance;Re/DisCharge;StartRec/TripDistance;EndRec;C1;C2\n")
     fout.write("Type;ToRecharge;Recharged;ID;Lvl;Distance;Iter;Recharge;StartRecharge;Stamp;EventCoords;ZoneC;WT_exceed;Discharge;TripDistance\n")
 
@@ -209,8 +203,8 @@ def main():
     print ("Dataset from",
         datetime.datetime.fromtimestamp(int(list(Stamps_Events.keys())[0])).strftime('%Y-%m-%d %H:%M:%S'),
         "to",
-        datetime.datetime.fromtimestamp(int(list(Stamps_Events.keys())[len(Stamps_Events)-1])).strftime('%Y-%m-%d %H:%M:%S'))      
-
+        datetime.datetime.fromtimestamp(int(list(Stamps_Events.keys())[len(Stamps_Events)-1])).strftime('%Y-%m-%d %H:%M:%S'))  
+        
     with click.progressbar(Stamps_Events, length=len(Stamps_Events)) as bar:
         for Stamp in bar:
             for Event in Stamps_Events[Stamp]:
@@ -223,14 +217,14 @@ def main():
                     ActualBooking +=1
                     BookingStarting_Position = coordinates_to_index(Event.coordinates)                
                     BookingID = Event.id_booking
-                    NearestCar, Distance, ZoneID, Iter  = SearchNearestBestCar(BookingStarting_Position)
+                    NearestCar, Distance, ZoneID, Iter  = SearchNearestBestCar(BookingStarting_Position, Stamp)
                     Recharge,StartRecharge = NearestCar.Recharge(Stamp)
                     NearestCar.setStartPosition(Event.coordinates)
                     BookingID_Car[BookingID] = NearestCar
                     Lvl = NearestCar.getBatteryLvl()
-
                     ID = NearestCar.getID()
                     ZoneC = zoneIDtoCoordinates(ZoneID)
+
                     d={"Type":"s",
                     "ToRecharge":np.NaN,
                     "Recharged":np.NaN,
@@ -248,24 +242,21 @@ def main():
                     "TripDistance":np.NaN}
 
 
-
+                    #print(d)
                     fout.write(dict_to_string(d))
 
-                    # fout.write("s;0;0;%d;%d;%d;%d;%f;%d;%d;0;0" \
-                    #     %(ID, Lvl, Distance, Iter, Recharge,StartRecharge,Stamp)+ ";" +str(Event.coordinates)+";"+str(ZoneC)+"\n")
-                    #     )
-
+                
+                
                 else:
                     BookingEndPosition = coordinates_to_index(Event.coordinates) 
                     if(BookingEndPosition<0): print(Event.coordinates) 
                     ActualBooking -=1
                     BookedCar = BookingID_Car[Event.id_booking]
                     Discarge, TripDistance = BookedCar.Discharge(Event.coordinates)            
-                    Lvl, ToRecharge, Recharged, Distance, WT_exceed = ParkCar(BookingEndPosition,BookedCar, tankThreshold, walkingTreshold)
+                    Lvl, ToRecharge, Recharged, Distance = ParkCar(BookingEndPosition,BookedCar)
                     BookedCar.setStartRecharge(Stamp)
                     ID = BookedCar.getID()
                     del BookingID_Car[Event.id_booking]
-                    # fout.write("e;%s;%s;%d;%d;%d;%f;%d"%(ToRecharge, Recharged, ID, Lvl,Distance, Discarge, TripDistance)+"\n")
 
                     d={"Type":"e",
                     "ToRecharge":ToRecharge,
@@ -279,27 +270,18 @@ def main():
                     "Stamp":Stamp,
                     "EventCoords":str(Event.coordinates),
                     "ZoneC":np.NaN,
-                    "WT_exceed": WT_exceed,
+                    "WT_exceed": np.NaN,
                     "Discharge":Discarge,
                     "TripDistance":TripDistance}
                     fout.write(dict_to_string(d))
 
-                    
-            # if(i>100): break
-
-
-                    
+                                   
 
     b = datetime.datetime.now()    
     c = (b - a).total_seconds()
-    print ("Tot deaths", tot_deaths)
     print("End Simulation: "+str(int(c)))
-    fStationsStats = open("../output/stationsStats.txt","w")
-    fStationsStats.write("ID;NoOfRecharing")
-    for stationID in countNoRech.keys():
-        fStationsStats.write(str(stationID)+";"+str(countNoRech[station]))
     
                 
-    # return
+    return
 
 main()

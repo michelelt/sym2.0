@@ -48,7 +48,6 @@ class Car(object):
         
         return
     
-    
     def EvalCurrentCapacity(self,CurrentStamp):
         
         kw = 2.0
@@ -58,7 +57,7 @@ class Car(object):
         if (self.BatteryCurrentCapacity + delta_c <= self.BatteryMaxCapacity):
             return self.BatteryCurrentCapacity + delta_c
 
-        return self.BatteryMaxCapacity_c
+        return self.BatteryMaxCapacity
     
     def Recharge(self,EndRecharge):
 
@@ -69,6 +68,7 @@ class Car(object):
 
         self.WasInRecharge = False
         return delta_c,self.StartRecharge
+
     
     def Discharge(self,BookingEndPosition):
         
@@ -84,10 +84,10 @@ class Car(object):
         return dc, distance
     
 
-    def getBatteryLvl(self, stamp = False):
+    def getBatteryLvl(self, Stamp = False):
         
-        if(stamp != False):
-            return self.EvalCurrentCapacity(stamp)/self.BatteryMaxCapacity*100
+        if(Stamp != False):
+            return self.EvalCurrentCapacity(Stamp)/self.BatteryMaxCapacity*100
         
         return self.BatteryCurrentCapacity/self.BatteryMaxCapacity*100
     

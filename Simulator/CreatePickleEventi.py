@@ -52,39 +52,20 @@ def main():
             #d1 = haversine(baselon, baselat, lon1, lat1)
             d2 = haversine(lon1, lat1, lon2, lat2)
 
-            '''
-            filtering on duration and distance
-            '''
+            
             if(duration > 120 and duration<3600 and d2>500):
-                '''
-                if coord inside the square or
-                if CSO is car2go, check if the coords inside per or from or to Caselle
-                '''
-                if( 
-                    checkPerimeter(lat1, lon1) and checkPerimeter(lat2, lon2) or
-                   (
-                    provider == "car2go" and  
-                    ((checkPerimeter(lat1, lon1) and checkCasellePerimeter(lat2, lon2)) or
-                    (
-                        checkCasellePerimeter(lat1, lon1) and checkPerimeter(lat2, lon2))))): 
+                if( checkPerimeter(lat1, lon1) and checkPerimeter(lat2, lon2) or
+                   (provider == "car2go" and  ((checkPerimeter(lat1, lon1) and checkCasellePerimeter(lat2, lon2)) or  (checkCasellePerimeter(lat1, lon1) and checkPerimeter(lat2, lon2))))): 
                     NumEvents+=1
-
-                    ### event cration addressed per univoque id ###
-                    id_events[i] = [booking['init_time'], booking['final_time'], ### timestamps
-                    EventBook(i,"s",  booking["origin_destination"]['coordinates'][0]), ### evento bookings
-                    EventBook(i ,"e", booking["origin_destination"]['coordinates'][1])]
-
-                    ### Collection of TS connecting the TS - booking ID ###
+                    id_events[i] = [booking['init_time'],booking['final_time'],EventBook(i,"s",  booking["origin_destination"]['coordinates'][0]),EventBook(i ,"e", booking["origin_destination"]['coordinates'][1])]
                     if booking['init_time'] not in dict_bookings:
                         dict_bookings[booking['init_time']]=[]
                     dict_bookings[booking['init_time']].append([i,"s"])
-                    
                     if booking['final_time'] not in dict_bookings:
                         dict_bookings[booking['final_time']]=[]
                     dict_bookings[booking['final_time']].append([i,"e"])        
                     i=i+1
                 
-                    ### ####
                     if(i<1000):
                         if booking['init_time'] not in dict_bookings_short:
                             dict_bookings_short[booking['init_time']]=[]
@@ -112,8 +93,6 @@ def main():
     print("Start")
     to_delete = []
     EventDeleted=0
-
-    ### prevent outliers ###
     for stamp in dict_bookings:
         startbooking = 0
         for event in dict_bookings[stamp]:
@@ -123,7 +102,7 @@ def main():
             EventDeleted+=startbooking
             to_delete.append(stamp)
         
-    ### Removing the elements which are outliers ###    
+        
     for stamp in to_delete:
         events_to_delete = []
         for event in dict_bookings[stamp]:
@@ -143,7 +122,7 @@ def main():
             del dict_bookings[stamp]
     
     
-    ### cerate definitvely the dict of dict of events ###
+    
     for stamp in dict_bookings:
         for i in range(0,len(dict_bookings[stamp])):
             NumEventsFiltered+=1

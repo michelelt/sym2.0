@@ -11,10 +11,6 @@ from Simulator.Classes.PlatesData import PlatesData
 import Simulator
 
 
-'''
-Crea il vettore v[targa] = starting position
-'''
-
 dict_plates={} #dictionary keys (plate), inside is a list of objects first appearance
 
 def main():
@@ -26,13 +22,12 @@ def main():
         
     collection_parkings = setup_mongodb(collection)
     
-    ### chagne here the ths in order to increase/decrease the fleet ###
     parkings = collection_parkings.find({"city": "Torino", "init_time" : {"$gt" : 1509494400, "$lt": 1509667200}});
     #geolocator = Nominatim()    
     #location = geolocator.geocode("Torino")
     #baselon = location.longitude
     #baselat = location.latitude
-    print provider
+
     for val in parkings:
             coords = val['loc']['coordinates']
             lon1 = coords[0]
