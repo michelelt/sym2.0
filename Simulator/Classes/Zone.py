@@ -24,7 +24,7 @@ class Zone(object):
     '''
     RETURN THE MOST CHARGED CAR BETWEEN THE CHARGING ONES 
     '''
-    def getBestRechargedCars(self):
+    def getBestRechargedCars(self,stamp):
         
         BestCar = ""
 
@@ -32,7 +32,7 @@ class Zone(object):
             if(BestCar == ""):
                 BestCar = CarI    
             else:
-                if(CarI.getBatteryLvl() > BestCar.getBatteryLvl()): BestCar = CarI  
+                if(CarI.getBatteryLvl(stamp) > BestCar.getBatteryLvl(stamp)): BestCar = CarI  
     
         if(BestCar != ""): del self.RechargedCars[self.RechargedCars.index(BestCar)]
         
