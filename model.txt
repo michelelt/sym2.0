@@ -15,4 +15,4 @@ Parametri
 -poszionamento iniziale auto
 -Lunghezza traccia
 
--pippo
+
