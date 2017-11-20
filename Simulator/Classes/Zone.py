@@ -22,6 +22,8 @@ class Zone(object):
         
     def getBestRechargedCars(self,Stamp):
         
+        if(len(self.RechargedCars)==0): return ""
+        
         BestCar = ""
         BestLvl = -1
 
@@ -41,6 +43,8 @@ class Zone(object):
         return BestCar
     
     def getBestCars(self):
+
+        if(len(self.Cars)==0): return ""
         
         BestCar = ""
 

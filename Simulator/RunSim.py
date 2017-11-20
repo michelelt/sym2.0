@@ -146,7 +146,7 @@ def main():
     
     tankThreshold = 50 # in [%]
     walkingTreshold = 2000 # in [m]
-    algorithm = "rnd"
+    algorithm = "max_time"
     tot_deaths = 0
 
     # countNoRech = {}
