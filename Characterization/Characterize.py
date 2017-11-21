@@ -23,10 +23,10 @@ def make_fusion_string(c1,c2):
 
   
     mys = "<Polygon><outerBoundaryIs><LinearRing><coordinates>"  \
-             + "%.4f, %.4f, 17.0 "%(c1-ShiftLon,c2-ShiftLat) \
-             + "%.4f, %.4f, 17.0 "%(c1+ShiftLon,c2-ShiftLat) \
-             + "%.4f, %.4f, 17.0 "%(c1+ShiftLon,c2+ShiftLat) \
-             + "%.4f, %.4f, 17.0 "%(c1-ShiftLon,c2+ShiftLat) \
+             + "%.4f, %.4f, 17.0 "%(c1-ShiftLon/2,c2-ShiftLat/2) \
+             + "%.4f, %.4f, 17.0 "%(c1+ShiftLon/2,c2-ShiftLat/2) \
+             + "%.4f, %.4f, 17.0 "%(c1+ShiftLon/2,c2+ShiftLat/2) \
+             + "%.4f, %.4f, 17.0 "%(c1-ShiftLon/2,c2+ShiftLat/2) \
           + "</coordinates></LinearRing></outerBoundaryIs></Polygon>"
     
     return mys
@@ -117,8 +117,8 @@ def main():
         area_string = make_fusion_string(c3,c4)
 
         i+=1
-        if(i<10):
-            fusionout.write(str(c0) + "; "+area_string + "; "+ " "+str(matrix[val][0]) +"; " + str(matrix[val][1])+ "; %.2f"%avgpark +"\n")
+        #if(i<10):
+        fusionout.write(str(c0) + "; "+area_string + "; "+ " "+str(matrix[val][0]) +"; " + str(matrix[val][1])+ "; %.2f"%avgpark +"\n")
         
         
 

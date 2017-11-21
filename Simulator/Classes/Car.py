@@ -52,7 +52,7 @@ class Car(object):
         
         kw = 2.0
 
-        duration = CurrentStamp-self.StartRecharge/60.0/60.0 #in hour
+        duration = (CurrentStamp-self.StartRecharge)/(60.0/60.0) #in hour
         delta_c = duration * kw
         if (self.BatteryCurrentCapacity + delta_c <= self.BatteryMaxCapacity):
             return delta_c, self.BatteryCurrentCapacity + delta_c

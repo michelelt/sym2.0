@@ -45,10 +45,10 @@ ShiftLat = (MaxLat-minLat)/Nrows
 '''
 add /2 in order to have a zonization 250x250
 '''
-CaselleMaxLat = CaselleCentralLat + shiftLat250m
-CaselleMaxLon = CaselleCentralLon + shiftLon250m
-CaselleminLat = CaselleCentralLat - shiftLat250m
-CaselleminLon = CaselleCentralLon + shiftLon250m
+CaselleMaxLat = CaselleCentralLat + ShiftLat
+CaselleMaxLon = CaselleCentralLon + ShiftLon
+CaselleminLat = CaselleCentralLat - ShiftLat
+CaselleminLon = CaselleCentralLon + ShiftLon
 
 provider="enjoy"
 
