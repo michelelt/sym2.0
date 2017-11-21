@@ -90,3 +90,13 @@ def zoneIDtoCoordinates(ID):
 
 
     return [CentalLoni, CentalLati]
+
+def zoneIDtoMatrixCoordinates(ID):
+    
+    Xi = ID%NColumns
+    Yi = int(ID/NColumns)
+
+    CentalLoni = (Xi+0.5)*ShiftLon+minLon
+    CentalLati = (Yi+0.5)*ShiftLat+minLat
+    
+    return (ID, Xi, Yi, CentalLoni, CentalLati)
