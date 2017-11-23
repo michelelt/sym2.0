@@ -19,8 +19,7 @@ path = p + "/Simulator/"
 
 
 
-# zones =  list(range(10,85,5))
-zones = []
+zones =  list(range(10,85,5))
 zones.append(120)
 zones.append(160)
 tt = [0,5,10,15,20, 25,30, 35,40,45,50]

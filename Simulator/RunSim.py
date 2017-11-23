@@ -13,6 +13,7 @@ import datetime
 import click
 import csv
 import sys
+import time
 
 
 def SearchAvailableCar(ZoneI,Stamp):
@@ -145,6 +146,7 @@ def dict_to_string(myDict):
 
 
 def main():
+    mt = time.time()
     numberOfStations = int(sys.argv[1])
     algorithm = str(sys.argv[2])
     tankThreshold = int(sys.argv[3]) # in [%]
@@ -179,6 +181,7 @@ def main():
     c = (b - a).total_seconds()
     print("End Load Zones: "+str(int(c)))
     i=0
+    print (time.time()-mt)
     
 
     #TotalCar1,TotalCar2 = getncar()
@@ -186,7 +189,11 @@ def main():
     
 
     #print(TotalCar1,TotalCar2,ActualBooking)
-    fout = open("../output/"+provider+"_"+algorithm+"_"+str(numberOfStations)+".txt","w")
+    fout = open("../output/aa_"+\
+        provider+"_"+\
+        algorithm+"_"+
+        str(numberOfStations)+"_"+\
+        str(tankThreshold) + ".txt","w")
     fout.write("yuppie ye")
     fout2 = open("../output/debugproblem.txt","w")
     a = datetime.datetime.now()
@@ -257,7 +264,7 @@ def main():
                     BookedCar.setStartRecharge(Stamp)
                     ID = BookedCar.getID()
                     del BookingID_Car[Event.id_booking]
-                    ZonceC = zoneIDtoCoordinates(ZoneID)
+                    ZoneC = zoneIDtoCoordinates(ZoneID)
 
                     d={"Type":"e",
                     "ToRecharge":ToRecharge,
@@ -270,7 +277,7 @@ def main():
                     "StartRecharge":np.NaN,
                     "Stamp":Stamp,
                     "EventCoords":str(Event.coordinates),
-                    "ZoneC":np.NaN,
+                    "ZoneC": ZoneC,
                     "Discharge":Discarge,
                     "TripDistance":TripDistance}
                     fout.write(dict_to_string(d))
