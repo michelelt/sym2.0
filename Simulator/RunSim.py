@@ -63,13 +63,13 @@ def ParkCar(BookingEndPosition,BookedCar, tankThreshold, walkingTreshold):
                     if(Found): 
                         Recharged = True
                         BookedCar.setInStation()
-                        return Lvl, ToRecharge, Recharged, Distance        
+                        return Lvl, ToRecharge, Recharged, Distance, ZoneI.ID        
 
     for DistanceI in DistancesFrom_Zone_Ordered[BookingEndPosition]:        
         RandomZones = DistanceI[1].getZones()
         for ZoneI in RandomZones:                    
             ZoneI.getAnyParking(BookedCar)
-            return Lvl, ToRecharge, Recharged, 0
+            return Lvl, ToRecharge, Recharged, 0, ZoneI.ID
 
 
 def loadRecharing(method, provider, numberOfStations):
@@ -253,10 +253,11 @@ def main():
                     ActualBooking -=1
                     BookedCar = BookingID_Car[Event.id_booking]
                     Discarge, TripDistance = BookedCar.Discharge(Event.coordinates)            
-                    Lvl, ToRecharge, Recharged, Distance = ParkCar(BookingEndPosition,BookedCar, tankThreshold, walkingTreshold)
+                    Lvl, ToRecharge, Recharged, Distance, ZoneID = ParkCar(BookingEndPosition,BookedCar, tankThreshold, walkingTreshold)
                     BookedCar.setStartRecharge(Stamp)
                     ID = BookedCar.getID()
                     del BookingID_Car[Event.id_booking]
+                    ZonceC = zoneIDtoCoordinates(ZoneID)
 
                     d={"Type":"e",
                     "ToRecharge":ToRecharge,
