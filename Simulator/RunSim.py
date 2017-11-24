@@ -189,7 +189,7 @@ def main():
     
 
     #print(TotalCar1,TotalCar2,ActualBooking)
-    fout = open("../output/aa_"+\
+    fout = open("../output/"+\
         provider+"_"+\
         algorithm+"_"+
         str(numberOfStations)+"_"+\
