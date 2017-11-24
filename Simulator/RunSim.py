@@ -154,8 +154,6 @@ def dict_to_string(myDict):
 def RunSim(algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Stamps_Events,RechargingStation_Zones_data,DistancesFrom_Zone_Ordered_data):
     
     
-    NRerouteStart = 0
-    NRerouteEnd = 0
     NRecharge = 0
     NStart = 0
     NEnd = 0
@@ -244,7 +242,6 @@ def RunSim(algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Sta
                     fout.write(dict_to_string(d))
 
                     if(Distance> 0):
-                        NRerouteStart+=1
                         MeterRerouteStart.append(Distance)
                     NStart+=1
                 else:
@@ -276,7 +273,6 @@ def RunSim(algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Sta
                     fout.write(dict_to_string(d))
 
                     if(Distance > 0):
-                        NRerouteEnd+=1
                         MeterRerouteEnd.append(Distance)
                     
                     if(Recharged == True):
@@ -292,8 +288,8 @@ def RunSim(algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Sta
     c = (b - a).total_seconds()
     print("End Simulation: "+str(int(c)))
     
-    PercRerouteEnd = NRerouteEnd/NEnd*100
-    PercRerouteStart = NRerouteStart/NStart*100
+    PercRerouteEnd = len(MeterRerouteEnd)/NEnd*100
+    PercRerouteStart = len(MeterRerouteEnd)/NStart*100
     PercRecharge = NRecharge/NEnd*100
     
     MedianMeterEnd = np.array(MeterRerouteEnd).median()
