@@ -111,10 +111,9 @@ RechargingStation_Zones = []
 
 DistancesFrom_Zone_Ordered ={}
 
-BookingID_Car = {}
-Stamps_Events ={}
 
 
+'''
 def getncar():
     
     TotalCar1 = 0
@@ -127,7 +126,7 @@ def getncar():
             TotalCar2 += ZoneI.getNumRecCar()
     
     return TotalCar1,TotalCar2
-
+'''
 def WriteOutHeader(file, parametersDict):
     for key in parametersDict.keys():
         file.write(key + ":" + str(parametersDict[key])+"\n")
@@ -152,48 +151,27 @@ def dict_to_string(myDict):
     return outputString
 
 
-def main():
-    numberOfStations = int(sys.argv[1])
-    algorithm = str(sys.argv[2])
-    tankThreshold = int(sys.argv[3]) # in [%]
-    walkingTreshold = int(sys.argv[4]) # in [m]
-
-
-    zoneEnjoy = 220
-
-    # countNoRech = {}
-
-    #BookingID_Car = load()
-    a = datetime.datetime.now()
-    Stamps_Events = pickle.load( open( "../events/"+provider+"_sorted_dict_events_obj.pkl", "rb" ) )
-    b = datetime.datetime.now()    
-    c = (b - a).total_seconds()
-    print("End Load Events: "+str(int(c)))
+def RunSim(algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Stamps_Events,RechargingStation_Zones_data,DistancesFrom_Zone_Ordered_data):
     
-    a = datetime.datetime.now()    
-    global RechargingStation_Zones
-    RechargingStation_Zones = loadRecharing(algorithm, provider, numberOfStations)
+    
+    NRerouteStart = 0
+    NRerouteEnd = 0
+    NRecharge = 0
+    NStart = 0
+    NEnd = 0
+    MeterRerouteStart = []
+    MeterRerouteEnd = []
+    NDeath = 0
+    
+    global RechargingStation_Zones 
+    RechargingStation_Zones = RechargingStation_Zones_data 
 
-
-
-    b = datetime.datetime.now()    
-    c = (b - a).total_seconds()
-    print("End Load Recharging: "+str(int(c)))
-
-    a = datetime.datetime.now()    
     global DistancesFrom_Zone_Ordered 
-    DistancesFrom_Zone_Ordered = pickle.load( open( "../input/"+provider+"_ZoneDistances.p", "rb" ) )
-    b = datetime.datetime.now()    
-    c = (b - a).total_seconds()
-    print("End Load Zones: "+str(int(c)))
-    i=0
-    
-    ZoneCars = pickle.load( open( "../input/"+provider+"_ZoneCars.p", "rb" ) )
-
+    DistancesFrom_Zone_Ordered = DistancesFrom_Zone_Ordered_data   
     #TotalCar1,TotalCar2 = getncar()
     ActualBooking = 0
-    
 
+    BookingID_Car = {}
     #print(TotalCar1,TotalCar2,ActualBooking)
     fout = open("../output/"+\
         provider+"_"+\
@@ -216,13 +194,16 @@ def main():
         datetime.datetime.fromtimestamp(int(list(Stamps_Events.keys())[0])).strftime('%Y-%m-%d %H:%M:%S'),
         "to",
         datetime.datetime.fromtimestamp(int(list(Stamps_Events.keys())[len(Stamps_Events)-1])).strftime('%Y-%m-%d %H:%M:%S'))  
-        
-        
+
+
     a = datetime.datetime.now()        
     b = datetime.datetime.now()    
     ReloadT0(ZoneCars, DistancesFrom_Zone_Ordered)            
     c = (b - a).total_seconds()
+
     print("End Load CarT0: "+str(int(c)))
+        
+    i=0
     with click.progressbar(Stamps_Events, length=len(Stamps_Events)) as bar:
         for Stamp in bar:
             for Event in Stamps_Events[Stamp]:
@@ -262,8 +243,10 @@ def main():
                     #print(d)
                     fout.write(dict_to_string(d))
 
-                
-                
+                    if(Distance> 0):
+                        NRerouteStart+=1
+                        MeterRerouteStart.append(Distance)
+                    NStart+=1
                 else:
                     BookingEndPosition = coordinates_to_index(Event.coordinates) 
                     if(BookingEndPosition<0): print(Event.coordinates) 
@@ -292,13 +275,32 @@ def main():
                     "TripDistance":TripDistance}
                     fout.write(dict_to_string(d))
 
-                                   
+                    if(Distance > 0):
+                        NRerouteEnd+=1
+                        MeterRerouteEnd.append(Distance)
+                    
+                    if(Recharged == True):
+                        NRecharge +=1
+                    
+                    if(BookedCar.getBatterCurrentCapacity()<0):
+                        NDeath +=1
+                    
+                    NEnd+=1
+
 
     b = datetime.datetime.now()    
     c = (b - a).total_seconds()
     print("End Simulation: "+str(int(c)))
     
-                
-    return
+    PercRerouteEnd = NRerouteEnd/NEnd*100
+    PercRerouteStart = NRerouteStart/NStart*100
+    PercRecharge = NRecharge/NEnd*100
+    
+    MedianMeterEnd = np.array(MeterRerouteEnd).median()
+    MeanMeterEnd = np.array(MeterRerouteEnd).mean()
 
-main()
+    MedianMeterStart = np.array(MeterRerouteEnd).median()
+    MeanMeterStart = np.array(MeterRerouteEnd).mean()
+                
+    return PercRerouteEnd, PercRerouteStart, PercRecharge, MedianMeterEnd, MeanMeterEnd, MedianMeterStart, MeanMeterStart, NEnd, NStart
+

@@ -104,3 +104,7 @@ class Car(object):
         if(self.FirstRental==1): return True
         
         return False
+
+    def getBatterCurrentCapacity(self):
+        
+        return self.BatteryCurrentCapacity
