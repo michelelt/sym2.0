@@ -195,8 +195,11 @@ def main():
     
 
     #print(TotalCar1,TotalCar2,ActualBooking)
-    fout = open("../output/"+provider+"_"+algorithm+"_"+str(numberOfStations)+".txt","w")
-    fout.write("yuppie ye")
+    fout = open("../output/"+\
+        provider+"_"+\
+        algorithm+"_"+\
+        str(numberOfStations)+"_"+
+        str(tankThreshold) + ".txt","w")
     fout2 = open("../output/debugproblem.txt","w")
     a = datetime.datetime.now()
     WriteOutHeader(fout, {"provider": provider,
@@ -271,7 +274,7 @@ def main():
                     BookedCar.setStartRecharge(Stamp)
                     ID = BookedCar.getID()
                     del BookingID_Car[Event.id_booking]
-                    ZonceC = zoneIDtoCoordinates(ZoneID)
+                    ZoneC = zoneIDtoCoordinates(ZoneID)
 
                     d={"Type":"e",
                     "ToRecharge":ToRecharge,
@@ -284,7 +287,7 @@ def main():
                     "StartRecharge":np.NaN,
                     "Stamp":Stamp,
                     "EventCoords":str(Event.coordinates),
-                    "ZoneC":np.NaN,
+                    "ZoneC":ZoneC,
                     "Discharge":Discarge,
                     "TripDistance":TripDistance}
                     fout.write(dict_to_string(d))
