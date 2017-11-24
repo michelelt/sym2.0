@@ -58,7 +58,7 @@ def AppendCaselle(i,ZoneDistances,ZoneID_Zone):
 def main():
 
     ZoneID_Zone = {}   
-    ZoneDistances= {}
+    ZoneDistances = {}
     ZoneNumCars = [0 for i in range(0,NColumns*Nrows+1)]  
     
     
@@ -76,19 +76,25 @@ def main():
         ZoneNumCars[CellIndex]+=1
        
 
-    k = 0    
+    k = 0   
+    ZoneCars = {} 
     for i in range(0,NColumns*Nrows+1):
         #if(ZoneNumCars[i]>0): print(i,ZoneNumCars[i])
         ZoneDistances[i]={}
         
         CarVector = []
         for j in range(0,ZoneNumCars[i]):
+            
             CarVector.append(Car(provider,k))
             k+=1        
+        ZoneCars[i] = CarVector
         ZoneID_Zone[i]= Zone(i,CarVector)
         
+    pickle.dump( ZoneCars, open( "../input/"+provider+"_ZoneCars.p", "wb" ) )
+
     print(NColumns,Nrows)
 
+    return 0
     for i in range(0,NColumns*Nrows+1):
         for j in range(i,NColumns*Nrows):
             de, dh = EvalDistance(i, j)

@@ -13,8 +13,15 @@ import datetime
 import click
 import csv
 import sys
-import time
 
+def ReloadT0(ZoneCars, DistancesFrom_Zone_Ordered):
+    
+    for DistanceI in DistancesFrom_Zone_Ordered[0]:        
+        RandomZones = DistanceI[1].getZones()
+        for ZoneI in RandomZones:            
+            ZoneI.setCars(ZoneCars[ZoneI.ID])        
+                
+        return 
 
 def SearchAvailableCar(ZoneI,Stamp):
 
@@ -146,7 +153,6 @@ def dict_to_string(myDict):
 
 
 def main():
-    mt = time.time()
     numberOfStations = int(sys.argv[1])
     algorithm = str(sys.argv[2])
     tankThreshold = int(sys.argv[3]) # in [%]
@@ -181,19 +187,15 @@ def main():
     c = (b - a).total_seconds()
     print("End Load Zones: "+str(int(c)))
     i=0
-    print (time.time()-mt)
     
+    ZoneCars = pickle.load( open( "../input/"+provider+"_ZoneCars.p", "rb" ) )
 
     #TotalCar1,TotalCar2 = getncar()
     ActualBooking = 0
     
 
     #print(TotalCar1,TotalCar2,ActualBooking)
-    fout = open("../output/"+\
-        provider+"_"+\
-        algorithm+"_"+
-        str(numberOfStations)+"_"+\
-        str(tankThreshold) + ".txt","w")
+    fout = open("../output/"+provider+"_"+algorithm+"_"+str(numberOfStations)+".txt","w")
     fout.write("yuppie ye")
     fout2 = open("../output/debugproblem.txt","w")
     a = datetime.datetime.now()
@@ -207,12 +209,17 @@ def main():
     # fout.write("Type;ToRecharge;Recharged;CarID;BatteryLvl;PickDistance;Re/DisCharge;StartRec/TripDistance;EndRec;C1;C2\n")
     fout.write("Type;ToRecharge;Recharged;ID;Lvl;Distance;Iter;Recharge;StartRecharge;Stamp;EventCoords;ZoneC;Discharge;TripDistance\n")
  
-
     print ("Dataset from",
         datetime.datetime.fromtimestamp(int(list(Stamps_Events.keys())[0])).strftime('%Y-%m-%d %H:%M:%S'),
         "to",
         datetime.datetime.fromtimestamp(int(list(Stamps_Events.keys())[len(Stamps_Events)-1])).strftime('%Y-%m-%d %H:%M:%S'))  
         
+        
+    a = datetime.datetime.now()        
+    b = datetime.datetime.now()    
+    ReloadT0(ZoneCars, DistancesFrom_Zone_Ordered)            
+    c = (b - a).total_seconds()
+    print("End Load CarT0: "+str(int(c)))
     with click.progressbar(Stamps_Events, length=len(Stamps_Events)) as bar:
         for Stamp in bar:
             for Event in Stamps_Events[Stamp]:
@@ -264,7 +271,7 @@ def main():
                     BookedCar.setStartRecharge(Stamp)
                     ID = BookedCar.getID()
                     del BookingID_Car[Event.id_booking]
-                    ZoneC = zoneIDtoCoordinates(ZoneID)
+                    ZonceC = zoneIDtoCoordinates(ZoneID)
 
                     d={"Type":"e",
                     "ToRecharge":ToRecharge,
@@ -277,7 +284,7 @@ def main():
                     "StartRecharge":np.NaN,
                     "Stamp":Stamp,
                     "EventCoords":str(Event.coordinates),
-                    "ZoneC": ZoneC,
+                    "ZoneC":np.NaN,
                     "Discharge":Discarge,
                     "TripDistance":TripDistance}
                     fout.write(dict_to_string(d))

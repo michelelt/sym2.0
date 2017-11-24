@@ -78,3 +78,12 @@ class Zone(object):
     def getNumCar(self):
         
         return len(self.Cars)
+    
+    
+    def setCars(self,cars):
+
+        self.Cars = cars
+        self.RechargedCars = []        
+
+        
+        return
