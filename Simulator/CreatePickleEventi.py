@@ -27,8 +27,12 @@ def main():
     if(provider == "car2go"):
         collection = "PermanentBookings"
     enjoy_bookings = setup_mongodb(collection)
+    #bookings = enjoy_bookings.find({"city": "Torino", 
+    #                                "init_time" :{"$gt" : 1504648800 , "$lt" : 1509577200}});
+
     bookings = enjoy_bookings.find({"city": "Torino", 
                                     "init_time" :{"$gt" : 1504648800 , "$lt" : 1509577200}});
+
     geolocator = Nominatim()    
     location = geolocator.geocode("Torino")
     #baselon = location.longitude

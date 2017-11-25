@@ -59,8 +59,6 @@ def main():
 
     jobs = []
 
-    manager = multiprocessing.Manager()
-    return_dict = manager.dict()
 
     RechargingStation_Zones = []
     
@@ -85,54 +83,85 @@ def main():
     
     results = ""
     k=0
+    step=0
+    manager = multiprocessing.Manager()
+
     while 1:
-        index=np.random.randint(len(RechargingStation_Zones), size = 1)[0]
-        ID=RechargingStation_Zones[index]
+        
+        return_dict = manager.dict()
+               
+        myindex=np.random.randint(len(RechargingStation_Zones), size = 1)[0]
+        #print("myind "+str(myindex))
+        ID=RechargingStation_Zones[myindex]
+        #print("pollo "+str(ID))
+        #print("rz")
+        #print(RechargingStation_Zones)
         retv = zoneIDtoMatrixCoordinates(ID) 
         xy= [retv[1],retv[2]]
-        RechargingStation_Zones_new=RechargingStation_Zones.copy()
         IDn=-1
-        while IDn < 0:
-            pos=np.random.randint(2, size = 1)[0]
-            PiuMeno=np.random.randint(2, size = 1)[0]
-            xynew=xy
-            xynew[pos]=xynew[pos]+(PiuMeno-1.5)*2
-            IDn=MatrixCoordinatesToID(xynew[0],xynew[1])
+
+        xynew = {}
+        xynew[0]=[xy[0]-1,xy[1]]
+        xynew[1]=[xy[0],xy[1]-1]
+        xynew[2]=[xy[0]+1,xy[1]]
+        xynew[3]=[xy[0],xy[1]+1]
+
+        RechargingStation_Zones_new = {}
+        for i in range(0,len(xynew)):
+            IDn=MatrixCoordinatesToID(xynew[i][0],xynew[i][1])
+            if(IDn>0 and IDn not in RechargingStation_Zones):
+                RechargingStation_Zones_new[i]=RechargingStation_Zones.copy()
+                RechargingStation_Zones_new[i][myindex]=IDn
         
-        RechargingStation_Zones_new[index]=IDn
+        #print("Number of threads: "+str(len(RechargingStation_Zones_new)))
+        for i in RechargingStation_Zones_new:
+            
+            p = Process(target=RunSim,args = (algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Stamps_Events,\
+                                           RechargingStation_Zones_new[i],DistancesFrom_Zone_Ordered,return_dict,i))
+            k+=1
+            jobs.append(p)
+            p.start()
         
-        p = Process(target=RunSim,args = (algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Stamps_Events,\
-                                           RechargingStation_Zones_new,DistancesFrom_Zone_Ordered,return_dict,k))
-    
-        jobs.append(p)
-        p.start()
+        
         for proc in jobs:
             proc.join()
 
 
-        new_results=""
+        
         for val in return_dict.values():
-            if(val["ProcessID"]==k): new_results = val
-            
-        print()
-        print("NEW STEP")
-        print(RechargingStation_Zones_new)
-        print(new_results)
-        if k==0 or (new_results["PercDeath"] <=results["PercDeath"] and new_results["MeanMeterEnd"]< results["MeanMeterEnd"]):
-            RechargingStation_Zones=RechargingStation_Zones_new.copy()
-            results=new_results.copy()
-            print()
-            print("NEW BEST SOLUTION FOUND")
-            print(RechargingStation_Zones)
-            print(results)
+            new_results = val
+            print("\nNEW STEP")
+            print(RechargingStation_Zones_new[int(new_results["ProcessID"])])
+            print(new_results)
+            if results == "" or (new_results["PercDeath"] <=results["PercDeath"] and new_results["MeanMeterEnd"]< results["MeanMeterEnd"]):
 
-        k+=1
+                fout = open("../output/best_solutions.txt","a")
+                RechargingStation_Zones=RechargingStation_Zones_new[int(new_results["ProcessID"])].copy()
+                print("\nNEW BEST SOLUTION FOUND")
+                print("**********************************************************************")
+                if(results!=""):
+                    print("Old: %.2f %.2f"%(results["PercDeath"],results["MeanMeterEnd"]))
+                print("New: %.2f %.2f"%(new_results["PercDeath"],new_results["MeanMeterEnd"]))
+                print("**********************************************************************")
+                
+                fout.write("\nNEW BEST SOLUTION FOUND\n")
+                fout.write("**********************************************************************\n")
+                fout.write("Nsteps: %d"%step+"\n")
+                if(results!=""):
+                    fout.write("Old: %.2f %.2f\n"%(results["PercDeath"],results["MeanMeterEnd"]))
+                fout.write("New: %.2f %.2f\n"%(new_results["PercDeath"],new_results["MeanMeterEnd"]))
+                fout.write(str(RechargingStation_Zones)+"\n")
+                fout.write(str(results)+"\n")
+                fout.write("**********************************************************************\n")
+                fout.close()
+
+                results=new_results.copy()
+                print(RechargingStation_Zones)
+                print(results)
+
+        step+=1
 
 
-    print("\n\n\n")
-    for val in return_dict.values():
-        print(val)
-        print("\n\n\n")
 
     #PercRerouteEnd, PercRerouteStart, PercRecharge,PercDeath, MedianMeterEnd, MeanMeterEnd, MedianMeterStart, MeanMeterStart, NEnd, NStart = \
     #        RunSim(algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Stamps_Events,RechargingStation_Zones,DistancesFrom_Zone_Ordered)

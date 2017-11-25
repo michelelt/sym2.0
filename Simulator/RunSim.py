@@ -151,7 +151,7 @@ def dict_to_string(myDict):
     return outputString
 
 
-def RunSim(algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Stamps_Events,RechargingStation_Zones_data,DistancesFrom_Zone_Ordered_data):
+def RunSim(algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Stamps_Events,RechargingStation_Zones_data,DistancesFrom_Zone_Ordered_data,return_dict,p):
     
     
     NRecharge = 0
@@ -188,18 +188,18 @@ def RunSim(algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Sta
     # fout.write("Type;ToRecharge;Recharged;CarID;BatteryLvl;PickDistance;Re/DisCharge;StartRec/TripDistance;EndRec;C1;C2\n")
     fout.write("Type;ToRecharge;Recharged;ID;Lvl;Distance;Iter;Recharge;StartRecharge;Stamp;EventCoords;ZoneC;Discharge;TripDistance\n")
  
-    print ("Dataset from",
+    '''print ("Dataset from",
         datetime.datetime.fromtimestamp(int(list(Stamps_Events.keys())[0])).strftime('%Y-%m-%d %H:%M:%S'),
         "to",
         datetime.datetime.fromtimestamp(int(list(Stamps_Events.keys())[len(Stamps_Events)-1])).strftime('%Y-%m-%d %H:%M:%S'))  
 
-
+    '''
     a = datetime.datetime.now()        
     b = datetime.datetime.now()    
     ReloadT0(ZoneCars, DistancesFrom_Zone_Ordered)            
     c = (b - a).total_seconds()
 
-    print("End Load CarT0: "+str(int(c)))
+    #print("End Load CarT0: "+str(int(c)))
         
     i=0
     with click.progressbar(Stamps_Events, length=len(Stamps_Events)) as bar:
@@ -286,17 +286,31 @@ def RunSim(algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Sta
 
     b = datetime.datetime.now()    
     c = (b - a).total_seconds()
-    print("End Simulation: "+str(int(c)))
+    #print("End Simulation: "+str(int(c)))
     
     PercRerouteEnd = len(MeterRerouteEnd)/NEnd*100
-    PercRerouteStart = len(MeterRerouteEnd)/NStart*100
+    PercRerouteStart = len(MeterRerouteStart)/NStart*100
     PercRecharge = NRecharge/NEnd*100
+    PercDeath = NDeath/NEnd*100
     
-    MedianMeterEnd = np.array(MeterRerouteEnd).median()
-    MeanMeterEnd = np.array(MeterRerouteEnd).mean()
+    MedianMeterEnd = np.median(np.array(MeterRerouteEnd))
+    MeanMeterEnd = np.mean(np.array(MeterRerouteEnd))
 
-    MedianMeterStart = np.array(MeterRerouteEnd).median()
-    MeanMeterStart = np.array(MeterRerouteEnd).mean()
-                
-    return PercRerouteEnd, PercRerouteStart, PercRecharge, MedianMeterEnd, MeanMeterEnd, MedianMeterStart, MeanMeterStart, NEnd, NStart
+    MedianMeterStart = np.median(np.array(MeterRerouteStart))
+    MeanMeterStart = np.mean(np.array(MeterRerouteStart))
+    
+    RetValues = {}
+    RetValues["ProcessID"] = p
+    RetValues["PercRerouteEnd"] = PercRerouteEnd
+    RetValues["PercRerouteStart"] = PercRerouteStart
+    RetValues["PercRecharge"] = PercRecharge
+    RetValues["PercDeath"] = PercDeath
+    RetValues["MedianMeterEnd"] = MedianMeterEnd
+    RetValues["MeanMeterEnd"] = MeanMeterEnd
+    RetValues["MedianMeterStart"] = MedianMeterStart
+    RetValues["MeanMeterStart"] = MeanMeterStart
+    RetValues["NEnd"] = NEnd
+    RetValues["NStart"] = NStart
 
+    return_dict[p] = RetValues
+    return

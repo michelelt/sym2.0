@@ -94,7 +94,7 @@ def main():
 
     print(NColumns,Nrows)
 
-    return 0
+    #return 0
     for i in range(0,NColumns*Nrows+1):
         for j in range(i,NColumns*Nrows):
             de, dh = EvalDistance(i, j)
@@ -118,5 +118,6 @@ def main():
     
     pickle.dump( ZoneDistances, open( "../input/"+provider+"_ZoneDistances.p", "wb" ) )
     
+    print("end")
     return
 main()
