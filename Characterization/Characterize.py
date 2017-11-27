@@ -115,9 +115,9 @@ def main():
         #print(val)
         coords = "%d %d %d %.4f %.4f"%(c0,c1,c2,c3,c4)
 
-        coords2 = "%d %.4f %.4f\n"%(c0,c3,c4)
+        coords2 = "%d %.4f %.4f"%(c0,c3,c4)
         
-        validzones.write(coords2)
+        validzones.write(coords2+ " %d\n"%matrix[val][0])
         
         avgpark = float(matrix[val][1])/float(matrix[val][0])
         foutzones.write(coords + " "+str(matrix[val][0]) + " "+ str(matrix[val][1])+ " %.2f"%avgpark +"\n")
