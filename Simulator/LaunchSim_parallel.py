@@ -12,8 +12,15 @@ from multiprocessing import Process
 import multiprocessing
 
 def main():
+    
 
-
+    ##TO AVOID: "OSError: [Errno 24] Too many open files"     
+    bashCommand = "ulimit -n 32768"
+    import subprocess
+    process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
+    process.communicate()
+    ###
+    
     walkingTreshold = 1000000#int(sys.argv[4]) # in [m]
 
     zoneEnjoy = 220

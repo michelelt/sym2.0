@@ -313,4 +313,7 @@ def RunSim(algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Sta
     RetValues["NStart"] = NStart
 
     return_dict[p] = RetValues
+    
+    fout.close()
+    fout2.close()
     return

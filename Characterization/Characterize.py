@@ -103,6 +103,8 @@ def main():
     
     fusionout = open("../output/fusion.txt","w")
     fusionout.write("ID ; Area; NParkings; SumTime; AvgTime\n")
+    
+    validzones = open("../input/"+provider+"_ValidZones.txt")
 
     for val in matrix:
         c0 = val[0]
@@ -112,6 +114,11 @@ def main():
         c4 = val[4]
         #print(val)
         coords = "%d %d %d %.4f %.4f"%(c0,c1,c2,c3,c4)
+
+        coords2 = "%d %.4f %.4f\n"%(c0,c3,c4)
+        
+        validzones.write(coords2)
+        
         avgpark = float(matrix[val][1])/float(matrix[val][0])
         foutzones.write(coords + " "+str(matrix[val][0]) + " "+ str(matrix[val][1])+ " %.2f"%avgpark +"\n")
         area_string = make_fusion_string(c3,c4)
