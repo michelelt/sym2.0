@@ -87,3 +87,10 @@ class Zone(object):
 
         
         return
+
+    def setAvaiableChargingStations(self, n):
+        self.AvaiableChargingStations = n
+        return
+
+    def getAvaiableChargingStations(self):
+        return self.AvaiableChargingStations

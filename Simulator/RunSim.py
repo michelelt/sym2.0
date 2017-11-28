@@ -13,14 +13,16 @@ import datetime
 import click
 import csv
 import sys
+import random
+import pandas as pd
 
-def ReloadT0(ZoneCars, DistancesFrom_Zone_Ordered):
-    
+def ReloadT0(ZoneCars, DistancesFrom_Zone_Ordered, AvaiableChargingStations):
+
     for DistanceI in DistancesFrom_Zone_Ordered[0]:        
         RandomZones = DistanceI[1].getZones()
         for ZoneI in RandomZones:            
             ZoneI.setCars(ZoneCars[ZoneI.ID])        
-                
+            ZoneI.setAvaiableChargingStations(AvaiableChargingStations)    
         return 
 
 def SearchAvailableCar(ZoneI,Stamp):
@@ -84,9 +86,13 @@ def loadRecharing(method, provider, numberOfStations):
     Stations = []
     csvfilePath = p+"/input/"+provider+"_"+method+"500.csv"
     if (method == "rnd"):
-        while len(Stations)<=numberOfStations:
-            rn = np.random.randint(NColumns*Nrows, size = 1)
-            if(rn not in Stations): Stations.append(rn)
+
+        zones = pd.read_csv("../input/"+provider+"_ValidZones.txt", sep=" ", header=0)
+        zones_list = list(zones.index)
+        # while len(Stations)<=numberOfStations:
+            # rn = np.random.randint(NColumns*Nrows, size = 1)
+            # if(rn not in Stations): Stations.append(rn)
+        Stations = random.sample(zones_list, numberOfStations)
 
     else :
         coords = []
@@ -151,7 +157,17 @@ def dict_to_string(myDict):
     return outputString
 
 
-def RunSim(algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Stamps_Events,RechargingStation_Zones_data,DistancesFrom_Zone_Ordered_data,return_dict,p):
+def RunSim(algorithm,
+    numberOfStations,
+    tankThreshold,
+    walkingTreshold,
+    ZoneCars,
+    Stamps_Events,
+    RechargingStation_Zones_data,
+    DistancesFrom_Zone_Ordered_data,
+    return_dict,
+    p,
+    AvaiableChargingStations):
     
     
     NRecharge = 0
@@ -174,15 +190,17 @@ def RunSim(algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Sta
     fout = open("../output/"+\
         provider+"_"+\
         algorithm+"_"+\
-        str(numberOfStations)+"_"+
+        str(AvaiableChargingStations)+"_"+\
+        str(numberOfStations)+"_"+\
         str(tankThreshold) + ".txt","w")
     fout2 = open("../output/debugproblem.txt","w")
     a = datetime.datetime.now()
     WriteOutHeader(fout, {"provider": provider,
-    "algorithm ": algorithm,
+    "algorithm": algorithm,
     "ChargingStations":numberOfStations, 
     "tankThreshold":tankThreshold,
-    "walkingTreshold":  walkingTreshold})
+    "walkingTreshold":  walkingTreshold, 
+    "AvaiableChargingStations":AvaiableChargingStations})
     
     
     # fout.write("Type;ToRecharge;Recharged;CarID;BatteryLvl;PickDistance;Re/DisCharge;StartRec/TripDistance;EndRec;C1;C2\n")
@@ -196,7 +214,7 @@ def RunSim(algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Sta
     '''
     a = datetime.datetime.now()        
     b = datetime.datetime.now()    
-    ReloadT0(ZoneCars, DistancesFrom_Zone_Ordered)            
+    ReloadT0(ZoneCars, DistancesFrom_Zone_Ordered, AvaiableChargingStations)            
     c = (b - a).total_seconds()
 
     #print("End Load CarT0: "+str(int(c)))

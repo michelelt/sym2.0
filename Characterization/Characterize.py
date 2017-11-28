@@ -104,7 +104,8 @@ def main():
     fusionout = open("../output/fusion.txt","w")
     fusionout.write("ID ; Area; NParkings; SumTime; AvgTime\n")
     
-    validzones = open("../input/"+provider+"_ValidZones.txt")
+    validzones = open("../input/"+provider+"_ValidZones.txt", "w")
+    validzones.write("lat long ParkingsNo\n")
 
     for val in matrix:
         c0 = val[0]
