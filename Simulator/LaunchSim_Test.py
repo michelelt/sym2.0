@@ -3,8 +3,9 @@ import os
 p = os.path.abspath('..')
 sys.path.append(p+"/")
 
-from Simulator.RunSim import *
+from Simulator.Globals.SupportFunctions import * 
 from Simulator.Globals.GlobalVar import * 
+from Simulator.RunSim import RunSim
 import datetime as datetime
 import pickle
 
@@ -33,12 +34,6 @@ def main():
     b = datetime.datetime.now()    
     c = (b - a).total_seconds()
     print("End Loading Zones: "+str(int(c)))
-
-    a = datetime.datetime.now()    
-    ZoneID_Zone = pickle.load( open( "../input/"+provider+"_ZoneID_Zone.p", "rb" ) )
-    b = datetime.datetime.now()    
-    c = (b - a).total_seconds()
-    print("End Loading ZoneID_Zone: "+str(int(c)))
     
     ZoneCars = pickle.load( open( "../input/"+provider+"_ZoneCars.p", "rb" ) )
 
@@ -67,11 +62,11 @@ def main():
     #tankThreshold = 50#int(sys.argv[3]) # in [%]
 
     
-    return_dict = {}
-    
-    
+
+    ZoneID_Zone = {}
+    ReloadZonesCars(ZoneCars, ZoneID_Zone, AvaiableChargingStations)
     RunSim(algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Stamps_Events,\
-       RechargingStation_Zones,DistancesFrom_Zone_Ordered,ZoneID_Zone,return_dict,-1,AvaiableChargingStations)
+       RechargingStation_Zones,DistancesFrom_Zone_Ordered,ZoneID_Zone,None,-1,AvaiableChargingStations)
                                                
     return
 

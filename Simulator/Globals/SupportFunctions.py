@@ -1,3 +1,6 @@
+
+
+
 '''
 Created on 13/nov/2017
 
@@ -11,9 +14,14 @@ import sys
 import os
 p = os.path.abspath('..')
 sys.path.append(p+"/")
+import pandas as pd
+import numpy as np
+import random
+import csv
+
 
 from Simulator.Globals.GlobalVar import *
-
+from Simulator.Classes.Zone import *
 
 def haversine(lon1, lat1, lon2, lat2):
     """
@@ -28,6 +36,7 @@ def haversine(lon1, lat1, lon2, lat2):
     a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
     c = 2 * asin(sqrt(a)) 
     km = 6367 * c
+    
     return int(km*1000)
 
 
@@ -107,3 +116,47 @@ def zoneIDtoMatrixCoordinates(ID):
     CentalLati = (Yi+0.5)*ShiftLat+minLat
     
     return (ID, Xi, Yi, CentalLoni, CentalLati)
+
+
+def ReloadZonesCars(ZoneCars, ZoneID_Zone, AvaiableChargingStations):
+    
+    for ZoneI_ID in ZoneCars:       
+        ZoneI = Zone(ZoneI_ID,AvaiableChargingStations) 
+        ZoneID_Zone[ZoneI_ID] = ZoneI 
+        ZoneI.setCars(ZoneCars[ZoneI.ID])    
+            
+    return 
+
+
+def loadRecharing(method, provider, numberOfStations):
+    Stations = []
+    csvfilePath = p+"/input/"+provider+"_"+method+"500.csv"
+    if (method == "rnd"):
+
+        zones = pd.read_csv("../input/"+provider+"_ValidZones.txt", sep=" ", header=0)
+        zones_list = list(zones.index)
+        # while len(Stations)<=numberOfStations:
+            # rn = np.random.randint(NColumns*Nrows, size = 1)
+            # if(rn not in Stations): Stations.append(rn)
+        Stations2 = random.sample(zones_list, numberOfStations)
+        for i in range(0,len(Stations2)):
+            Stations.append(np.array(Stations2[i]))
+
+
+    else :
+        coords = []
+        with open(csvfilePath, 'rt') as csvfile:
+                csvreader = csv.reader(csvfile, delimiter=',')
+                next(csvreader)
+                for row in csvreader:
+                    coords.insert(0, float(row[2])) #lon
+                    coords.insert(1, float(row[1])) #lat
+                    index = np.array(coordinates_to_index(coords))
+                    Stations.append(index)
+                    if len(Stations) == numberOfStations+1:
+                        Stations.pop(0)
+                        break
+        
+    return Stations
+
+

@@ -11,31 +11,9 @@ from Simulator.Globals.GlobalVar import *
 from Simulator.Globals.SupportFunctions import *
 import datetime
 import click
-import csv
-import sys
-import random
-import pandas as pd
 
 
-def resetCars(cars):
-
-    for carI in cars:
-        carI.resetFields()
-
-    return
-
-def ReloadT0(ZoneCars, DistancesFrom_Zone_Ordered, AvaiableChargingStations):
-    
-    for DistanceI in DistancesFrom_Zone_Ordered[0]:        
-        RandomZones = DistanceI[1].getZones()
-        for ZoneI_ID in RandomZones:  
-            ZoneI = ZoneID_Zone[ZoneI_ID]
-            ZoneI.setCars(ZoneCars[ZoneI.ID])        
-            #resetCars(ZoneI.Cars)     
-            ZoneI.setAvaiableChargingStations(AvaiableChargingStations)    
-    return 
-
-def SearchAvailableCar(ZoneI,Stamp):
+def SearchAvailableCar(RechargingStation_Zones,ZoneI,Stamp):
 
     SelectedCar = "" 
     if(ZoneI.ID in RechargingStation_Zones):
@@ -46,7 +24,7 @@ def SearchAvailableCar(ZoneI,Stamp):
     
     return SelectedCar
 
-def SearchNearestBestCar(BookingStarting_Position,Stamp):
+def SearchNearestBestCar(RechargingStation_Zones,DistancesFrom_Zone_Ordered,ZoneID_Zone,BookingStarting_Position,Stamp):
        
     SelectedCar = ""
     Distance = -1
@@ -56,7 +34,7 @@ def SearchNearestBestCar(BookingStarting_Position,Stamp):
         RandomZones = DistanceI[1].getZones()
         for ZoneI_ID in RandomZones:
             ZoneI = ZoneID_Zone[ZoneI_ID]                    
-            SelectedCar = SearchAvailableCar(ZoneI,Stamp)
+            SelectedCar = SearchAvailableCar(RechargingStation_Zones,ZoneI,Stamp)
             if(SelectedCar != ""):
                 Distance = DistanceI[1].getDistance()
                 return SelectedCar, Distance, ZoneI.ID, Iter
@@ -64,7 +42,7 @@ def SearchNearestBestCar(BookingStarting_Position,Stamp):
     print("erroreeeee")
     return -1, -1
 
-def ParkCar(BookingEndPosition,BookedCar, tankThreshold, walkingTreshold):
+def ParkCar(RechargingStation_Zones, DistancesFrom_Zone_Ordered, ZoneID_Zone, BookingEndPosition, BookedCar, tankThreshold, walkingTreshold):
     
     ToRecharge = False
     Recharged = False
@@ -95,60 +73,8 @@ def ParkCar(BookingEndPosition,BookedCar, tankThreshold, walkingTreshold):
             return Lvl, ToRecharge, Recharged, 0, ZoneI.ID
 
 
-def loadRecharing(method, provider, numberOfStations):
-    Stations = []
-    csvfilePath = p+"/input/"+provider+"_"+method+"500.csv"
-    if (method == "rnd"):
-
-        zones = pd.read_csv("../input/"+provider+"_ValidZones.txt", sep=" ", header=0)
-        zones_list = list(zones.index)
-        # while len(Stations)<=numberOfStations:
-            # rn = np.random.randint(NColumns*Nrows, size = 1)
-            # if(rn not in Stations): Stations.append(rn)
-        Stations2 = random.sample(zones_list, numberOfStations)
-        for i in range(0,len(Stations2)):
-            Stations.append(np.array(Stations2[i]))
 
 
-    else :
-        coords = []
-        with open(csvfilePath, 'rt') as csvfile:
-                csvreader = csv.reader(csvfile, delimiter=',')
-                next(csvreader)
-                for row in csvreader:
-                    coords.insert(0, float(row[2])) #lon
-                    coords.insert(1, float(row[1])) #lat
-                    index = np.array(coordinates_to_index(coords))
-                    Stations.append(index)
-                    if len(Stations) == numberOfStations+1:
-                        Stations.pop(0)
-                        break
-        
-    return Stations
-
-def load_distances():
-    return
-
-RechargingStation_Zones = []
-
-DistancesFrom_Zone_Ordered ={}
-
-ZoneID_Zone = {}
-
-'''
-def getncar():
-    
-    TotalCar1 = 0
-    TotalCar2 = 0
-    
-    for DistanceI in DistancesFrom_Zone_Ordered[1964]:        
-        RandomZones = DistanceI[1].getZones()
-        for ZoneI in RandomZones:                    
-            TotalCar1 += ZoneI.getNumCar()
-            TotalCar2 += ZoneI.getNumRecCar()
-    
-    return TotalCar1,TotalCar2
-'''
 def WriteOutHeader(file, parametersDict):
     for key in parametersDict.keys():
         file.write(key + ":" + str(parametersDict[key])+"\n")
@@ -179,13 +105,11 @@ def RunSim(algorithm,
     walkingTreshold,
     ZoneCars,
     Stamps_Events,
-    RechargingStation_Zones_data,
-    DistancesFrom_Zone_Ordered_data,
-    ZoneID_Zone_data,
+    RechargingStation_Zones,
+    DistancesFrom_Zone_Ordered,
     return_dict,
     p,
     AvaiableChargingStations):
-    
     
     NRecharge = 0
     NStart = 0
@@ -194,20 +118,13 @@ def RunSim(algorithm,
     MeterRerouteEnd = []
     NDeath = 0
     
-    global RechargingStation_Zones 
-    RechargingStation_Zones = RechargingStation_Zones_data 
-
-    global DistancesFrom_Zone_Ordered 
-    DistancesFrom_Zone_Ordered = DistancesFrom_Zone_Ordered_data   
-    
-    global ZoneID_Zone 
-    ZoneID_Zone = ZoneID_Zone_data   
-
-    #TotalCar1,TotalCar2 = getncar()
     ActualBooking = 0
 
     BookingID_Car = {}
-    #print(TotalCar1,TotalCar2,ActualBooking)
+
+    ZoneID_Zone = {}
+    ReloadZonesCars(ZoneCars, ZoneID_Zone, AvaiableChargingStations)
+
     fout = open("../output/"+\
         provider+"_"+\
         algorithm+"_"+\
@@ -233,10 +150,6 @@ def RunSim(algorithm,
         datetime.datetime.fromtimestamp(int(list(Stamps_Events.keys())[len(Stamps_Events)-1])).strftime('%Y-%m-%d %H:%M:%S'))  
 
     '''
-    a = datetime.datetime.now()        
-    b = datetime.datetime.now()    
-    ReloadT0(ZoneCars, DistancesFrom_Zone_Ordered, AvaiableChargingStations)            
-    c = (b - a).total_seconds()
 
     #print("End Load CarT0: "+str(int(c)))
         
@@ -253,7 +166,8 @@ def RunSim(algorithm,
                     ActualBooking +=1
                     BookingStarting_Position = coordinates_to_index(Event.coordinates)                
                     BookingID = Event.id_booking
-                    NearestCar, Distance, ZoneID, Iter  = SearchNearestBestCar(BookingStarting_Position, Stamp)
+                    NearestCar, Distance, ZoneID, Iter  = SearchNearestBestCar(RechargingStation_Zones,DistancesFrom_Zone_Ordered,ZoneID_Zone,\
+                                                                               BookingStarting_Position, Stamp)
                     Recharge,StartRecharge = NearestCar.Recharge(Stamp)
                     NearestCar.setStartPosition(Event.coordinates)
                     BookingID_Car[BookingID] = NearestCar
@@ -289,7 +203,8 @@ def RunSim(algorithm,
                     ActualBooking -=1
                     BookedCar = BookingID_Car[Event.id_booking]
                     Discarge, TripDistance = BookedCar.Discharge(Event.coordinates)            
-                    Lvl, ToRecharge, Recharged, Distance, ZoneID = ParkCar(BookingEndPosition,BookedCar, tankThreshold, walkingTreshold)
+                    Lvl, ToRecharge, Recharged, Distance, ZoneID = ParkCar(RechargingStation_Zones,DistancesFrom_Zone_Ordered,ZoneID_Zone,\
+                                                                           BookingEndPosition, BookedCar, tankThreshold, walkingTreshold)
                     BookedCar.setStartRecharge(Stamp)
                     ID = BookedCar.getID()
                     del BookingID_Car[Event.id_booking]
@@ -326,32 +241,34 @@ def RunSim(algorithm,
     b = datetime.datetime.now()    
     c = (b - a).total_seconds()
     #print("End Simulation: "+str(int(c)))
-    
-    PercRerouteEnd = len(MeterRerouteEnd)/NEnd*100
-    PercRerouteStart = len(MeterRerouteStart)/NStart*100
-    PercRecharge = NRecharge/NEnd*100
-    PercDeath = NDeath/NEnd*100
-    
-    MedianMeterEnd = np.median(np.array(MeterRerouteEnd))
-    MeanMeterEnd = np.mean(np.array(MeterRerouteEnd))
 
-    MedianMeterStart = np.median(np.array(MeterRerouteStart))
-    MeanMeterStart = np.mean(np.array(MeterRerouteStart))
+    if(return_dict != None):
     
-    RetValues = {}
-    RetValues["ProcessID"] = p
-    RetValues["PercRerouteEnd"] = PercRerouteEnd
-    RetValues["PercRerouteStart"] = PercRerouteStart
-    RetValues["PercRecharge"] = PercRecharge
-    RetValues["PercDeath"] = PercDeath
-    RetValues["MedianMeterEnd"] = MedianMeterEnd
-    RetValues["MeanMeterEnd"] = MeanMeterEnd
-    RetValues["MedianMeterStart"] = MedianMeterStart
-    RetValues["MeanMeterStart"] = MeanMeterStart
-    RetValues["NEnd"] = NEnd
-    RetValues["NStart"] = NStart
-
-    return_dict[p] = RetValues
+        PercRerouteEnd = len(MeterRerouteEnd)/NEnd*100
+        PercRerouteStart = len(MeterRerouteStart)/NStart*100
+        PercRecharge = NRecharge/NEnd*100
+        PercDeath = NDeath/NEnd*100
+        
+        MedianMeterEnd = np.median(np.array(MeterRerouteEnd))
+        MeanMeterEnd = np.mean(np.array(MeterRerouteEnd))
+    
+        MedianMeterStart = np.median(np.array(MeterRerouteStart))
+        MeanMeterStart = np.mean(np.array(MeterRerouteStart))
+    
+        RetValues = {}
+        RetValues["ProcessID"] = p
+        RetValues["PercRerouteEnd"] = PercRerouteEnd
+        RetValues["PercRerouteStart"] = PercRerouteStart
+        RetValues["PercRecharge"] = PercRecharge
+        RetValues["PercDeath"] = PercDeath
+        RetValues["MedianMeterEnd"] = MedianMeterEnd
+        RetValues["MeanMeterEnd"] = MeanMeterEnd
+        RetValues["MedianMeterStart"] = MedianMeterStart
+        RetValues["MeanMeterStart"] = MeanMeterStart
+        RetValues["NEnd"] = NEnd
+        RetValues["NStart"] = NStart
+    
+        return_dict[p] = RetValues
     
     fout.close()
     fout2.close()

@@ -34,7 +34,7 @@ def EvalDistance(i,j):
 
     return de,dh
 
-def AppendCaselle(i,ZoneDistances,ZoneID_Zone):
+def AppendCaselle(i,ZoneDistances):
 
 
     Xi = i%NColumns
@@ -57,7 +57,7 @@ def AppendCaselle(i,ZoneDistances,ZoneID_Zone):
 
 def main():
 
-    ZoneID_Zone = {}   
+    #ZoneID_Zone = {}   
     ZoneDistances = {}
     ZoneNumCars = [0 for i in range(0,NColumns*Nrows+1)]  
     
@@ -88,7 +88,7 @@ def main():
             CarVector.append(Car(provider,k))
             k+=1        
         ZoneCars[i] = CarVector
-        ZoneID_Zone[i]= Zone(i,CarVector)
+        #ZoneID_Zone[i]= Zone(i,DefaultAvaiableChargingStations)
         
     pickle.dump( ZoneCars, open( "../input/"+provider+"_ZoneCars.p", "wb" ) )
 
@@ -107,7 +107,7 @@ def main():
                     ZoneDistances[j][de] = Distance(RealDistance) 
                 ZoneDistances[j][de].appendZone(i)
         
-        AppendCaselle(i,ZoneDistances,ZoneID_Zone)
+        AppendCaselle(i,ZoneDistances)
             
     
     for i in range(0,len(ZoneDistances)):
@@ -117,7 +117,7 @@ def main():
     
     
     pickle.dump( ZoneDistances, open( "../input/"+provider+"_ZoneDistances.p", "wb" ) )
-    pickle.dump( ZoneID_Zone, open( "../input/"+provider+"_ZoneID_Zone.p", "wb" ) )
+    #pickle.dump( ZoneID_Zone, open( "../input/"+provider+"_ZoneID_Zone.p", "wb" ) )
     
     print("end")
     return

@@ -8,16 +8,16 @@ import os
 p = os.path.abspath('..')
 sys.path.append(p+"/")
 
-from Simulator.Classes.Car import Car
 from Simulator.Globals.GlobalVar import *
+from Simulator.Classes.Car import *
 
 class Zone(object):
       
-    def __init__(self, ID, cars):
+    def __init__(self, ID,AvaiableChargingStations):
         
-        self.AvaiableChargingStations = 6
+        self.AvaiableChargingStations = AvaiableChargingStations
         self.ID = ID
-        self.Cars = cars
+        self.Cars = []
         self.RechargedCars = []        
         return
         

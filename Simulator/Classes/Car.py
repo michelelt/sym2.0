@@ -5,11 +5,15 @@ Created on 13/nov/2017
 '''
 import sys
 import os
-from Simulator.Globals.GlobalVar import CorrectiveFactor
 p = os.path.abspath('..')
 sys.path.append(p+"/")
 
-from  Simulator.Globals.SupportFunctions import haversine
+from Simulator.Globals.SupportFunctions2 import *
+
+
+from Simulator.Globals.GlobalVar import CorrectiveFactor
+
+
 
 class Car(object):
     
