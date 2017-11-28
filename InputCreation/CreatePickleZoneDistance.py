@@ -47,11 +47,11 @@ def AppendCaselle(i,ZoneDistances,ZoneID_Zone):
     RealDistance = dh
     if(de not in ZoneDistances[i]):
         ZoneDistances[i][de] = Distance(RealDistance) 
-    ZoneDistances[i][de].appendZone(ZoneID_Zone[Caselle])
+    ZoneDistances[i][de].appendZone(Caselle)
     if(i!=Caselle):
         if(de not in ZoneDistances[Caselle]):
             ZoneDistances[Caselle][de] = Distance(RealDistance) 
-        ZoneDistances[Caselle][de].appendZone(ZoneID_Zone[i])
+        ZoneDistances[Caselle][de].appendZone(i)
 
     return
 
@@ -101,11 +101,11 @@ def main():
             RealDistance = dh
             if(de not in ZoneDistances[i]):
                 ZoneDistances[i][de] = Distance(RealDistance) 
-            ZoneDistances[i][de].appendZone(ZoneID_Zone[j])
+            ZoneDistances[i][de].appendZone(j)
             if(i!=j):
                 if(de not in ZoneDistances[j]):
                     ZoneDistances[j][de] = Distance(RealDistance) 
-                ZoneDistances[j][de].appendZone(ZoneID_Zone[i])
+                ZoneDistances[j][de].appendZone(i)
         
         AppendCaselle(i,ZoneDistances,ZoneID_Zone)
             
@@ -117,6 +117,7 @@ def main():
     
     
     pickle.dump( ZoneDistances, open( "../input/"+provider+"_ZoneDistances.p", "wb" ) )
+    pickle.dump( ZoneID_Zone, open( "../input/"+provider+"_ZoneID_Zone.p", "wb" ) )
     
     print("end")
     return
