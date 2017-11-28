@@ -44,15 +44,15 @@ path = p + "/Simulator/"
 def main():
 
 
-    walkingTreshold = 1000000#int(sys.argv[4]) # in [m]
+    walkingTreshold = 1000000
 
     zoneEnjoy = 222
 
 
-    numberOfStations =int(sys.argv[1])
-    algorithm =  str(sys.argv[2])
-    tankThreshold = int(sys.argv[3]) # in [%]
-    AvaiableChargingStations = int(sys.argv[4])
+    #numberOfStations =int(sys.argv[1])
+    #algorithm =  str(sys.argv[2])
+    #tankThreshold = int(sys.argv[3]) # in [%]
+    #AvaiableChargingStations = int(sys.argv[4])
 
 
 
@@ -105,16 +105,20 @@ def main():
     #     rn = np.random.randint(NColumns*Nrows, size = 1)[0]
     #     if(rn not in RechargingStation_Zones): RechargingStation_Zones.append(rn)
 
-    zones =  list(range(10,85,5))
+    zones = []
     zones.append(120)
     zones.append(160)
     global RechargingStation_Zones
 
-    tt = [0,5,10,15,20, 25,30, 35,40,45,50]
-    for algorithm in ["max_time", "max_parking", "rnd"]:
-        for AvaiableChargingStations in [2,4]:
+    tt = [20,50]
+
+
+    for AvaiableChargingStations in [2,4,6]:
+    	for algorithm in ["max_time", "max_parking", "rnd"]:
             for numberOfStations in zones:
                 for tankThreshold in tt:
+
+                    print (AvaiableChargingStations, algorithm, numberOfStations, tankThreshold)
 
                     a = datetime.datetime.now()    
                     RechargingStation_Zones = loadRecharing(algorithm, provider, numberOfStations)
@@ -122,8 +126,19 @@ def main():
                     c = (b - a).total_seconds()
                     print("End Load Recharging: "+str(int(c)))
 
-                    RunSim(algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Stamps_Events,\
-                    RechargingStation_Zones,DistancesFrom_Zone_Ordered,return_dict,k, AvaiableChargingStations)
+                    RunSim(algorithm,
+                        numberOfStations,
+                        tankThreshold,
+                        walkingTreshold,
+                        ZoneCars,
+                        Stamps_Events,
+                        RechargingStation_Zones,
+                        DistancesFrom_Zone_Ordered,
+                        return_dict,
+                        k, 
+                        AvaiableChargingStations)
+
+                return
 
 main()
 

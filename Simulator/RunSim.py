@@ -16,14 +16,23 @@ import sys
 import random
 import pandas as pd
 
-def ReloadT0(ZoneCars, DistancesFrom_Zone_Ordered, AvaiableChargingStations):
 
+def resetCars(cars):
+
+    for carI in cars:
+        carI.resetFields()
+
+    return
+
+def ReloadT0(ZoneCars, DistancesFrom_Zone_Ordered, AvaiableChargingStations):
     for DistanceI in DistancesFrom_Zone_Ordered[0]:        
         RandomZones = DistanceI[1].getZones()
-        for ZoneI in RandomZones:            
+        for ZoneI in RandomZones:  
+            print (ZoneI.ID)
             ZoneI.setCars(ZoneCars[ZoneI.ID])        
+            resetCars(ZoneI.Cars)     
             ZoneI.setAvaiableChargingStations(AvaiableChargingStations)    
-        return 
+    return 
 
 def SearchAvailableCar(ZoneI,Stamp):
 
@@ -92,7 +101,10 @@ def loadRecharing(method, provider, numberOfStations):
         # while len(Stations)<=numberOfStations:
             # rn = np.random.randint(NColumns*Nrows, size = 1)
             # if(rn not in Stations): Stations.append(rn)
-        Stations = random.sample(zones_list, numberOfStations)
+        Stations2 = random.sample(zones_list, numberOfStations)
+        for i in range(0,len(Stations2)):
+            Stations.append(np.array(Stations2[i]))
+
 
     else :
         coords = []

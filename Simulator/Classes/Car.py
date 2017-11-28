@@ -108,3 +108,15 @@ class Car(object):
     def getBatterCurrentCapacity(self):
         
         return self.BatteryCurrentCapacity
+
+    def resetFields(self):
+
+        self.BatteryCurrentCapacity = self.BatteryMaxCapacity 
+        self.NumRentals = 0
+        self.WasInRecharge = False
+        self.StartRecharge = 0 #stamp
+        self.StartBookingPosition = 0 #posizione
+        self.FirstRental = 0
+
+        print("Reset")
+        return
