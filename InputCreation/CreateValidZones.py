@@ -34,10 +34,7 @@ def main():
     #baselon = location.longitude
     #baselat = location.latitude
 
-    
-    
-    
-    
+   
     matrix = {}
     Discarded=0
     for booking in bookings:
