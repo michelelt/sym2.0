@@ -118,5 +118,5 @@ class Car(object):
         self.StartBookingPosition = 0 #posizione
         self.FirstRental = 0
 
-        print("Reset")
+        #print("Reset")
         return

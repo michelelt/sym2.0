@@ -25,12 +25,13 @@ def resetCars(cars):
     return
 
 def ReloadT0(ZoneCars, DistancesFrom_Zone_Ordered, AvaiableChargingStations):
+    
     for DistanceI in DistancesFrom_Zone_Ordered[0]:        
         RandomZones = DistanceI[1].getZones()
         for ZoneI in RandomZones:  
-            print (ZoneI.ID)
+            
             ZoneI.setCars(ZoneCars[ZoneI.ID])        
-            resetCars(ZoneI.Cars)     
+            #resetCars(ZoneI.Cars)     
             ZoneI.setAvaiableChargingStations(AvaiableChargingStations)    
     return 
 

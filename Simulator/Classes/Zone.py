@@ -9,6 +9,7 @@ p = os.path.abspath('..')
 sys.path.append(p+"/")
 
 from Simulator.Classes.Car import Car
+from Simulator.Globals.GlobalVar import *
 
 class Zone(object):
       
@@ -82,8 +83,13 @@ class Zone(object):
     
     def setCars(self,cars):
 
-        self.Cars = cars
         self.RechargedCars = []        
+        
+        CarVector = []
+        for CarI in cars:
+            CarVector.append(Car(provider,CarI.ID))        
+        
+        self.Cars = CarVector
 
         
         return

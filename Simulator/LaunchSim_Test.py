@@ -40,10 +40,18 @@ def main():
 
 
     numberOfStations = 160#len(RechargingStation_Zones)#int(sys.argv[1])
-    algorithm = "rnd"#str(sys.argv[2])
+    algorithm = "max_"#str(sys.argv[2])
     
     a = datetime.datetime.now()    
     global RechargingStation_Zones
+    
+    
+    algorithm= "max_parking" 
+    numberOfStations = 160 
+    tankThreshold = 5 
+    AvaiableChargingStations = 2
+    
+    
     RechargingStation_Zones = loadRecharing(algorithm, provider, numberOfStations)
     b = datetime.datetime.now()    
     c = (b - a).total_seconds()
@@ -52,12 +60,14 @@ def main():
     print(RechargingStation_Zones)
     #simulation 1
     
-    tankThreshold = 50#int(sys.argv[3]) # in [%]
+    #tankThreshold = 50#int(sys.argv[3]) # in [%]
 
     
     return_dict = {}
+    
+    
     RunSim(algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Stamps_Events,\
-       RechargingStation_Zones,DistancesFrom_Zone_Ordered,return_dict,-1,-1)
+       RechargingStation_Zones,DistancesFrom_Zone_Ordered,return_dict,-1,AvaiableChargingStations)
                                                
     return
 
