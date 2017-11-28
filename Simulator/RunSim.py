@@ -28,8 +28,8 @@ def ReloadT0(ZoneCars, DistancesFrom_Zone_Ordered, AvaiableChargingStations):
     
     for DistanceI in DistancesFrom_Zone_Ordered[0]:        
         RandomZones = DistanceI[1].getZones()
-        for ZoneI in RandomZones:  
-            
+        for ZoneI_ID in RandomZones:  
+            ZoneI = ZoneID_Zone[ZoneI_ID]
             ZoneI.setCars(ZoneCars[ZoneI.ID])        
             #resetCars(ZoneI.Cars)     
             ZoneI.setAvaiableChargingStations(AvaiableChargingStations)    
@@ -54,7 +54,8 @@ def SearchNearestBestCar(BookingStarting_Position,Stamp):
     for DistanceI in DistancesFrom_Zone_Ordered[BookingStarting_Position]:        
         Iter +=1
         RandomZones = DistanceI[1].getZones()
-        for ZoneI in RandomZones:                    
+        for ZoneI_ID in RandomZones:
+            ZoneI = ZoneID_Zone[ZoneI_ID]                    
             SelectedCar = SearchAvailableCar(ZoneI,Stamp)
             if(SelectedCar != ""):
                 Distance = DistanceI[1].getDistance()
@@ -77,7 +78,8 @@ def ParkCar(BookingEndPosition,BookedCar, tankThreshold, walkingTreshold):
             Distance = DistanceI[1].getDistance()
             if(Distance > walkingTreshold): break            
             RandomZones = DistanceI[1].getZones()
-            for ZoneI in RandomZones:     
+            for ZoneI_ID in RandomZones:     
+                ZoneI = ZoneID_Zone[ZoneI_ID]
                 if(ZoneI.ID in RechargingStation_Zones):               
                     Found = ZoneI.getParkingAtRechargingStations(BookedCar)
                     if(Found): 
@@ -87,7 +89,8 @@ def ParkCar(BookingEndPosition,BookedCar, tankThreshold, walkingTreshold):
 
     for DistanceI in DistancesFrom_Zone_Ordered[BookingEndPosition]:        
         RandomZones = DistanceI[1].getZones()
-        for ZoneI in RandomZones:                    
+        for ZoneI_ID in RandomZones:       
+            ZoneI = ZoneID_Zone[ZoneI_ID]             
             ZoneI.getAnyParking(BookedCar)
             return Lvl, ToRecharge, Recharged, 0, ZoneI.ID
 
@@ -130,7 +133,7 @@ RechargingStation_Zones = []
 
 DistancesFrom_Zone_Ordered ={}
 
-
+ZoneID_Zone = {}
 
 '''
 def getncar():
@@ -178,6 +181,7 @@ def RunSim(algorithm,
     Stamps_Events,
     RechargingStation_Zones_data,
     DistancesFrom_Zone_Ordered_data,
+    ZoneID_Zone_data,
     return_dict,
     p,
     AvaiableChargingStations):
@@ -195,6 +199,10 @@ def RunSim(algorithm,
 
     global DistancesFrom_Zone_Ordered 
     DistancesFrom_Zone_Ordered = DistancesFrom_Zone_Ordered_data   
+    
+    global ZoneID_Zone 
+    ZoneID_Zone = ZoneID_Zone_data   
+
     #TotalCar1,TotalCar2 = getncar()
     ActualBooking = 0
 

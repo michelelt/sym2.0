@@ -25,16 +25,20 @@ def main():
     Stamps_Events = pickle.load( open( "../events/"+provider+"_sorted_dict_events_obj.pkl", "rb" ) )
     b = datetime.datetime.now()    
     c = (b - a).total_seconds()
-    print("End Load Events: "+str(int(c)))
+    print("End Loading Events: "+str(int(c)))
 
 
     a = datetime.datetime.now()    
-    global DistancesFrom_Zone_Ordered 
     DistancesFrom_Zone_Ordered = pickle.load( open( "../input/"+provider+"_ZoneDistances.p", "rb" ) )
     b = datetime.datetime.now()    
     c = (b - a).total_seconds()
-    print("End Load Zones: "+str(int(c)))
-    i=0
+    print("End Loading Zones: "+str(int(c)))
+
+    a = datetime.datetime.now()    
+    ZoneID_Zone = pickle.load( open( "../input/"+provider+"_ZoneID_Zone.p", "rb" ) )
+    b = datetime.datetime.now()    
+    c = (b - a).total_seconds()
+    print("End Loading ZoneID_Zone: "+str(int(c)))
     
     ZoneCars = pickle.load( open( "../input/"+provider+"_ZoneCars.p", "rb" ) )
 
@@ -67,7 +71,7 @@ def main():
     
     
     RunSim(algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Stamps_Events,\
-       RechargingStation_Zones,DistancesFrom_Zone_Ordered,return_dict,-1,AvaiableChargingStations)
+       RechargingStation_Zones,DistancesFrom_Zone_Ordered,ZoneID_Zone,return_dict,-1,AvaiableChargingStations)
                                                
     return
 
