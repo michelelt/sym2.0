@@ -42,7 +42,7 @@ def SearchNearestBestCar(RechargingStation_Zones,DistancesFrom_Zone_Ordered,Zone
     print("erroreeeee")
     return -1, -1
 
-def ParkCar(RechargingStation_Zones, DistancesFrom_Zone_Ordered, ZoneID_Zone, BookingEndPosition, BookedCar, tankThreshold, walkingTreshold):
+def ParkCar(RechargingStation_Zones, DistancesFrom_Zone_Ordered, ZoneID_Zone, BookingEndPosition, BookedCar, tankThreshold, walkingTreshold, BestEffort):
     
     ToRecharge = False
     Recharged = False
@@ -65,6 +65,13 @@ def ParkCar(RechargingStation_Zones, DistancesFrom_Zone_Ordered, ZoneID_Zone, Bo
                         BookedCar.setInStation()
                         return Lvl, ToRecharge, Recharged, Distance, ZoneI.ID        
 
+    if(BestEffort and BookingEndPosition in RechargingStation_Zones):
+        Found = ZoneI.getParkingAtRechargingStations(BookedCar)
+        if(Found): 
+            Recharged = True
+            BookedCar.setInStation()
+            return Lvl, ToRecharge, Recharged, Distance, ZoneI.ID        
+        
     for DistanceI in DistancesFrom_Zone_Ordered[BookingEndPosition]:        
         RandomZones = DistanceI[1].getZones()
         for ZoneI_ID in RandomZones:       
@@ -109,7 +116,8 @@ def RunSim(algorithm,
     DistancesFrom_Zone_Ordered,
     return_dict,
     p,
-    AvaiableChargingStations):
+    AvaiableChargingStations,
+    BestEffort):
     
     NRecharge = 0
     NStart = 0
@@ -125,7 +133,15 @@ def RunSim(algorithm,
     ZoneID_Zone = {}
     ReloadZonesCars(ZoneCars, ZoneID_Zone, AvaiableChargingStations)
 
+    policy = "Forced"
+    if(BestEffort == True):
+        if(tankThreshold<0):
+            policy="Bests"
+        else:
+            policy="Hybrid"
+    
     fout = open("../output/"+\
+        policy+ "_"+\
         provider+"_"+\
         algorithm+"_"+\
         str(AvaiableChargingStations)+"_"+\
@@ -133,7 +149,9 @@ def RunSim(algorithm,
         str(tankThreshold) + ".txt","w")
     fout2 = open("../output/debugproblem.txt","w")
     a = datetime.datetime.now()
-    WriteOutHeader(fout, {"provider": provider,
+    WriteOutHeader(fout, {
+    "policy": policy,                          
+    "provider": provider,
     "algorithm": algorithm,
     "ChargingStations":numberOfStations, 
     "tankThreshold":tankThreshold,
@@ -204,7 +222,7 @@ def RunSim(algorithm,
                     BookedCar = BookingID_Car[Event.id_booking]
                     Discarge, TripDistance = BookedCar.Discharge(Event.coordinates)            
                     Lvl, ToRecharge, Recharged, Distance, ZoneID = ParkCar(RechargingStation_Zones,DistancesFrom_Zone_Ordered,ZoneID_Zone,\
-                                                                           BookingEndPosition, BookedCar, tankThreshold, walkingTreshold)
+                                                                           BookingEndPosition, BookedCar, tankThreshold, walkingTreshold, BestEffort)
                     BookedCar.setStartRecharge(Stamp)
                     ID = BookedCar.getID()
                     del BookingID_Car[Event.id_booking]

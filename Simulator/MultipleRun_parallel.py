@@ -49,7 +49,7 @@ def main():
     
     zones = [i for i in range(10,121,5)]
 
-    tt = [i for i in range(10,61,5)]
+    tt = [i for i in range(10,11,5)]
 
 
     for AvaiableChargingStations in [2,4,6]:
@@ -59,12 +59,12 @@ def main():
                 for tankThreshold in tt:
                     RechargingStation_Zones = loadRecharing(algorithm, provider, numberOfStations)
                     p = Process(target=RunSim,args = (algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Stamps_Events,\
-                                                    RechargingStation_Zones,DistancesFrom_Zone_Ordered,None,-1,AvaiableChargingStations))
+                                                    RechargingStation_Zones,DistancesFrom_Zone_Ordered,None,-1,AvaiableChargingStations,False))
                     jobs.append(p)
                     p.start()
             for proc in jobs:
                 proc.join()
-                
+            return
                 
     
                 

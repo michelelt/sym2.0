@@ -2,6 +2,7 @@ events/*
 input/*
 Old_Stuff/*
 output*/*
+fig*/*
 __pycache__/*
 .project
 .pydevproject
