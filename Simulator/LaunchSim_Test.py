@@ -47,8 +47,8 @@ def main():
     
     algorithm= "max_parking" 
     numberOfStations = 160 
-    tankThreshold = 5 
-    AvaiableChargingStations = 2
+    tankThreshold = 10 
+    AvaiableChargingStations = 8
     
     
     RechargingStation_Zones = loadRecharing(algorithm, provider, numberOfStations)
@@ -65,8 +65,21 @@ def main():
 
     ZoneID_Zone = {}
     ReloadZonesCars(ZoneCars, ZoneID_Zone, AvaiableChargingStations)
-    RunSim(algorithm,numberOfStations,tankThreshold,walkingTreshold,ZoneCars,Stamps_Events,\
-       RechargingStation_Zones,DistancesFrom_Zone_Ordered,ZoneID_Zone,None,-1,AvaiableChargingStations)
+    RunSim(algorithm,
+           numberOfStations,
+           tankThreshold,
+           walkingTreshold,
+           ZoneCars,
+           Stamps_Events,
+           RechargingStation_Zones,
+           DistancesFrom_Zone_Ordered,
+           None,
+           -1,
+           AvaiableChargingStations,
+           False)
+    
+    
+  
                                                
     return
 

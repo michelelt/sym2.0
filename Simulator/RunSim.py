@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+ #!/usr/bin/env python3
 
 import numpy as np
 import pickle
@@ -66,12 +66,16 @@ def ParkCar(RechargingStation_Zones, DistancesFrom_Zone_Ordered, ZoneID_Zone, Bo
                         return Lvl, ToRecharge, Recharged, Distance, ZoneI.ID        
 
     if(BestEffort and BookingEndPosition in RechargingStation_Zones):
+
+        DistanceI = DistancesFrom_Zone_Ordered[BookingEndPosition][0]        
+        ZoneI_ID = DistanceI[1].getZones()[0]
+        ZoneI = ZoneID_Zone[ZoneI_ID]        
         Found = ZoneI.getParkingAtRechargingStations(BookedCar)
         if(Found): 
             Recharged = True
             BookedCar.setInStation()
             return Lvl, ToRecharge, Recharged, Distance, ZoneI.ID        
-        
+
     for DistanceI in DistancesFrom_Zone_Ordered[BookingEndPosition]:        
         RandomZones = DistanceI[1].getZones()
         for ZoneI_ID in RandomZones:       
@@ -98,8 +102,15 @@ def dict_to_string(myDict):
     
     outputString =""
     for k in mykeys:
-        outputString += str(myDict[k])+";"
-
+        if(type(myDict[k]) is int):
+            outputString +="%d;"%myDict[k]
+        elif(type(myDict[k]) is str):
+            outputString +="%s;"%myDict[k]
+        elif(type(myDict[k]) is float):
+            outputString +="%.6f;"%myDict[k]
+        else:
+            outputString +=str(myDict[k]).replace(" ", "")+";"
+        
     outputString = outputString[:-1]
     outputString+="\n"
 
@@ -107,17 +118,22 @@ def dict_to_string(myDict):
 
 
 def RunSim(algorithm,
+    policy,
     numberOfStations,
+    AvaiableChargingStations,
     tankThreshold,
     walkingTreshold,
     ZoneCars,
-    Stamps_Events,
     RechargingStation_Zones,
+    Stamps_Events,
     DistancesFrom_Zone_Ordered,
     return_dict,
     p,
-    AvaiableChargingStations,
-    BestEffort):
+    foutname):
+
+    BestEffort = False    
+    if(policy=="Best" or policy == "Hybrid"): BestEffort = True
+    
     
     NRecharge = 0
     NStart = 0
@@ -133,20 +149,9 @@ def RunSim(algorithm,
     ZoneID_Zone = {}
     ReloadZonesCars(ZoneCars, ZoneID_Zone, AvaiableChargingStations)
 
-    policy = "Forced"
-    if(BestEffort == True):
-        if(tankThreshold<0):
-            policy="Bests"
-        else:
-            policy="Hybrid"
     
-    fout = open("../output/"+\
-        policy+ "_"+\
-        provider+"_"+\
-        algorithm+"_"+\
-        str(AvaiableChargingStations)+"_"+\
-        str(numberOfStations)+"_"+\
-        str(tankThreshold) + ".txt","w")
+    fout = open("../output/"+foutname,"w")
+                
     fout2 = open("../output/debugproblem.txt","w")
     a = datetime.datetime.now()
     WriteOutHeader(fout, {
@@ -290,4 +295,5 @@ def RunSim(algorithm,
     
     fout.close()
     fout2.close()
+    os.system('cat "%s" | ssh bigdatadb hdfs dfs -put -f - Simulator/output/%s' %(foutname,foutname))
     return
