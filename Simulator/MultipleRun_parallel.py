@@ -53,14 +53,14 @@ def main():
     for i in range(120,121,20):
         zones.append(i)
     tt = []#-5
-    for i in range(60,61,10):
+    for i in range(50,61,10):
         tt.append(i)
     
     
     
-    for BestEffort in [True,False]:
-        for AvaiableChargingStations in [2,4,6]:
-            for algorithm in ["max_time", "max_parking", "rnd"]:
+    for BestEffort in [True]:#,False]:
+        for AvaiableChargingStations in [6]: #2,4,
+            for algorithm in ["max_time"]:#, "max_parking", "rnd"]:
                 jobs=[]
                 for numberOfStations in zones:
                     for tankThreshold in tt:

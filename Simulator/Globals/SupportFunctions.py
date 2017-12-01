@@ -128,7 +128,7 @@ def ReloadZonesCars(ZoneCars, ZoneID_Zone, AvaiableChargingStations):
     return 
 
 
-def loadRecharing(method, provider, numberOfStations):
+def loadRecharing(method, numberOfStations):
     Stations = []
     csvfilePath = p+"/input/"+provider+"_"+method+"500.csv"
     if (method == "rnd"):
@@ -169,8 +169,7 @@ def foutname(BestEffort,algorithm,AvaiableChargingStations,numberOfStations,tank
         else:
             policy="Hybrid"
 
-        fileid =  provider+"_"+policy +"_"+algorithm+"_"+str(AvaiableChargingStations)+"_"+str(numberOfStations)+"_"+str(tankThreshold) +"_"+str(walkingTreshold) + ".txt","w"
+        fileid =  provider+"_"+policy +"_"+algorithm+"_"+str(AvaiableChargingStations)+"_"+str(numberOfStations)+"_"+str(tankThreshold) +"_"+str(walkingTreshold)
         
-            
     return policy, fileid,fileid+".txt"
 

@@ -172,7 +172,6 @@ def RunSim(BestEffort,
         datetime.datetime.fromtimestamp(int(list(Stamps_Events.keys())[len(Stamps_Events)-1])).strftime('%Y-%m-%d %H:%M:%S'))  
 
     '''
-
         
     i=0
     with click.progressbar(Stamps_Events, length=len(Stamps_Events)) as bar:
@@ -296,10 +295,12 @@ def RunSim(BestEffort,
     
     fout.close()
     fout2.close()
+
     current_folder = os.getcwd().split("/")
     output_folder = ""
     for i in range(0,len(current_folder)-1):
-        output_folder += current_folder+"/"
-    output_folder+="output/"
+        output_folder += current_folder[i]+"/"
+    output_folder+="output/"    
     os.system('cat %s | ssh bigdatadb hdfs dfs -put -f - Simulator/output/%s' %(output_folder+fname,fname))
+    
     return
