@@ -159,4 +159,18 @@ def loadRecharing(method, provider, numberOfStations):
         
     return Stations
 
+def foutname(BestEffort,algorithm,AvaiableChargingStations,numberOfStations,tankThreshold,walkingTreshold):
+    
+    foutname = ""
+    policy = "Forced"
+    if(BestEffort == True):
+        if(tankThreshold<0):
+            policy="Best"
+        else:
+            policy="Hybrid"
+
+        fileid =  provider+"_"+policy +"_"+algorithm+"_"+str(AvaiableChargingStations)+"_"+str(numberOfStations)+"_"+str(tankThreshold) +"_"+str(walkingTreshold) + ".txt","w"
+        
+            
+    return policy, fileid,fileid+".txt"
 

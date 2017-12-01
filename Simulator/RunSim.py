@@ -97,7 +97,7 @@ def dict_to_string(myDict):
     
     mykeys = ["Type", "ToRecharge", "Recharged","ID","Lvl","Distance",
     "Iter","Recharge", "StartRecharge", "Stamp","EventCoords",
-    "ZoneC", "Discharge", "TripDistance"]
+    "ZoneC", "Discharge", "TripDistance","FileID"]
     
     
     outputString =""
@@ -117,9 +117,8 @@ def dict_to_string(myDict):
     return outputString
 
 
-def RunSim(algorithm,
-    policy,
-    numberOfStations,
+def RunSim(BestEffort,
+    algorithm,
     AvaiableChargingStations,
     tankThreshold,
     walkingTreshold,
@@ -128,11 +127,11 @@ def RunSim(algorithm,
     Stamps_Events,
     DistancesFrom_Zone_Ordered,
     return_dict,
-    p,
-    foutname):
+    p):
 
-    BestEffort = False    
-    if(policy=="Best" or policy == "Hybrid"): BestEffort = True
+    numberOfStations = len(RechargingStation_Zones)
+    
+    policy, fileID, fname = foutname(BestEffort,algorithm,AvaiableChargingStations,numberOfStations,tankThreshold,walkingTreshold)
     
     
     NRecharge = 0
@@ -147,25 +146,25 @@ def RunSim(algorithm,
     BookingID_Car = {}
 
     ZoneID_Zone = {}
+    
     ReloadZonesCars(ZoneCars, ZoneID_Zone, AvaiableChargingStations)
 
     
-    fout = open("../output/"+foutname,"w")
+    fout = open("../output/"+fname,"w")
                 
     fout2 = open("../output/debugproblem.txt","w")
     a = datetime.datetime.now()
     WriteOutHeader(fout, {
-    "policy": policy,                          
     "provider": provider,
+    "policy": policy,                          
     "algorithm": algorithm,
-    "ChargingStations":numberOfStations, 
+    "ChargingStations":numberOfStations,
+    "AvaiableChargingStations":AvaiableChargingStations, 
     "tankThreshold":tankThreshold,
-    "walkingTreshold":  walkingTreshold, 
-    "AvaiableChargingStations":AvaiableChargingStations})
+    "walkingTreshold":  walkingTreshold})
     
     
-    # fout.write("Type;ToRecharge;Recharged;CarID;BatteryLvl;PickDistance;Re/DisCharge;StartRec/TripDistance;EndRec;C1;C2\n")
-    fout.write("Type;ToRecharge;Recharged;ID;Lvl;Distance;Iter;Recharge;StartRecharge;Stamp;EventCoords;ZoneC;Discharge;TripDistance\n")
+    fout.write("Type;ToRecharge;Recharged;ID;Lvl;Distance;Iter;Recharge;StartRecharge;Stamp;EventCoords;ZoneC;Discharge;TripDistance;FileID\n")
  
     '''print ("Dataset from",
         datetime.datetime.fromtimestamp(int(list(Stamps_Events.keys())[0])).strftime('%Y-%m-%d %H:%M:%S'),
@@ -174,7 +173,6 @@ def RunSim(algorithm,
 
     '''
 
-    #print("End Load CarT0: "+str(int(c)))
         
     i=0
     with click.progressbar(Stamps_Events, length=len(Stamps_Events)) as bar:
@@ -211,7 +209,8 @@ def RunSim(algorithm,
                     "EventCoords":str(Event.coordinates),
                     "ZoneC":str(ZoneC),
                     "Discharge":np.NaN,
-                    "TripDistance":np.NaN}
+                    "TripDistance":np.NaN,
+                    "FileID": fileID}
 
 
                     #print(d)
@@ -246,7 +245,9 @@ def RunSim(algorithm,
                     "EventCoords":str(Event.coordinates),
                     "ZoneC":ZoneC,
                     "Discharge":Discarge,
-                    "TripDistance":TripDistance}
+                    "TripDistance":TripDistance,
+                    "FileID": fileID}
+                    
                     fout.write(dict_to_string(d))
 
                     if(Distance > 0):
@@ -295,5 +296,10 @@ def RunSim(algorithm,
     
     fout.close()
     fout2.close()
-    os.system('cat "%s" | ssh bigdatadb hdfs dfs -put -f - Simulator/output/%s' %(foutname,foutname))
+    current_folder = os.getcwd().split("/")
+    output_folder = ""
+    for i in range(0,len(current_folder)-1):
+        output_folder += current_folder+"/"
+    output_folder+="output/"
+    os.system('cat %s | ssh bigdatadb hdfs dfs -put -f - Simulator/output/%s' %(output_folder+fname,fname))
     return

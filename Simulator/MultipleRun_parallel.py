@@ -14,20 +14,6 @@ from multiprocessing import Process
 #import subprocess
 
 
-def foutname(BestEffort,algorithm,AvaiableChargingStations,numberOfStations,tankThreshold):
-    
-    foutname = ""
-    policy = "Forced"
-    if(BestEffort == True):
-        if(tankThreshold<0):
-            policy="Best"
-        else:
-            policy="Hybrid"
-        
-        foutname =  policy+ "_"+provider+"_"+algorithm+"_"+str(AvaiableChargingStations)+"_"+str(numberOfStations)+"_"+str(tankThreshold) + ".txt","w"
-            
-    return policy, foutname
-
 def main():
     
 
@@ -63,11 +49,11 @@ def main():
 
 
     
-    zones = [i for i in range(10,61,5)]
-    for i in range(80,121,20):
+    zones = [i for i in range(60,61,5)]
+    for i in range(120,121,20):
         zones.append(i)
-    tt = [-5]
-    for i in range(0,61,10):
+    tt = []#-5
+    for i in range(60,61,10):
         tt.append(i)
     
     
@@ -79,16 +65,24 @@ def main():
                 for numberOfStations in zones:
                     for tankThreshold in tt:
                         if(tankThreshold<0 and BestEffort==False): continue
-                        nsimulations +=1
-                        
-                        policy, foutname = foutname(BestEffort,algorithm,AvaiableChargingStations,numberOfStations,tankThreshold)
                         
                         RechargingStation_Zones = loadRecharing(algorithm, numberOfStations)
-                        p = Process(target=RunSim,args = (algorithm,policy,numberOfStations,AvaiableChargingStations,
-                                                          tankThreshold,walkingTreshold,ZoneCars,RechargingStation_Zones,          
-                                                          Stamps_Events,DistancesFrom_Zone_Ordered,None,-1,foutname))
+                        p = Process(target=RunSim,args = (BestEffort,
+                                                          algorithm,
+                                                          AvaiableChargingStations,
+                                                          tankThreshold,
+                                                          walkingTreshold,
+                                                          ZoneCars,
+                                                          RechargingStation_Zones,
+                                                          Stamps_Events,
+                                                          DistancesFrom_Zone_Ordered,
+                                                          None,
+                                                          -1))
+                        nsimulations +=1
+
                         jobs.append(p)
                         p.start()
+                
                 for proc in jobs:
                     proc.join()
                 
