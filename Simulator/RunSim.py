@@ -87,7 +87,11 @@ def ParkCar(RechargingStation_Zones, DistancesFrom_Zone_Ordered, ZoneID_Zone, Bo
 
 
 def WriteOutHeader(file, parametersDict):
-    for key in parametersDict.keys():
+    
+    HeaderOreder = ["Provider", "Policy", "Algorithm", "ChargingStations", 
+     "AvaiableChargingStations", "TankThreshold", "WalkingTreshold"]
+    
+    for key in HeaderOreder:
         file.write(key + ":" + str(parametersDict[key])+"\n")
     file.write(initDataSet+"\n")
 
@@ -108,8 +112,11 @@ def dict_to_string(myDict):
             outputString +="%s;"%myDict[k]
         elif(type(myDict[k]) is float):
             outputString +="%.6f;"%myDict[k]
+        elif(type(myDict[k]) is bool):
+            outputString +=str(myDict[k])
         else:
-            outputString +=str(myDict[k]).replace(" ", "")+";"
+            outputString +="[%.6f,%.6f];"%(myDict[k][0],myDict[k][1])
+            
         
     outputString = outputString[:-1]
     outputString+="\n"
@@ -155,13 +162,13 @@ def RunSim(BestEffort,
     fout2 = open("../output/debugproblem.txt","w")
     a = datetime.datetime.now()
     WriteOutHeader(fout, {
-    "provider": provider,
-    "policy": policy,                          
-    "algorithm": algorithm,
+    "Provider": provider,
+    "Policy": policy,                          
+    "Algorithm": algorithm,
     "ChargingStations":numberOfStations,
     "AvaiableChargingStations":AvaiableChargingStations, 
-    "tankThreshold":tankThreshold,
-    "walkingTreshold":  walkingTreshold})
+    "TankThreshold":tankThreshold,
+    "WalkingTreshold":  walkingTreshold})
     
     
     fout.write("Type;ToRecharge;Recharged;ID;Lvl;Distance;Iter;Recharge;StartRecharge;Stamp;EventCoords;ZoneC;Discharge;TripDistance;FileID\n")
@@ -205,8 +212,8 @@ def RunSim(BestEffort,
                     "Recharge":Recharge,
                     "StartRecharge":StartRecharge,
                     "Stamp":Stamp,
-                    "EventCoords":str(Event.coordinates),
-                    "ZoneC":str(ZoneC),
+                    "EventCoords":Event.coordinates,
+                    "ZoneC":ZoneC,
                     "Discharge":np.NaN,
                     "TripDistance":np.NaN,
                     "FileID": fileID}
@@ -214,7 +221,6 @@ def RunSim(BestEffort,
 
                     #print(d)
                     fout.write(dict_to_string(d))
-
                     if(Distance> 0):
                         MeterRerouteStart.append(Distance)
                     NStart+=1
@@ -241,7 +247,7 @@ def RunSim(BestEffort,
                     "Recharge":np.NaN,
                     "StartRecharge":np.NaN,
                     "Stamp":Stamp,
-                    "EventCoords":str(Event.coordinates),
+                    "EventCoords":Event.coordinates,
                     "ZoneC":ZoneC,
                     "Discharge":Discarge,
                     "TripDistance":TripDistance,
