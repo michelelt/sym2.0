@@ -4,11 +4,11 @@ import numpy as np
 import pandas as pd
 import os
 
-header = ["provider","policy","algorithm","tankThreshold","zones","acs","walkingThreshold","typeS", "typeE",
-          "avgWalkedDistance","medianWalkedDistance", "avgWalkedDistanceGlobal", "medianWalkedDistanceGlobal",
-          "avgSOC", "medianSOC", "amountRecharge","amountRechargeForced","amountRechargeForcedFail",
-          "amountRechargeBestEffort", "amountRechargePerc", "avgTimeInStation", "medianTimeInStation",
-          "deaths","reroute","reroutePerc","reroutePercofRecharge"]
+header = ["Provider","Policy","Algorithm","TankThreshold","Zones","Acs","WalkingThreshold","TypeS", "TypeE",
+          "AvgWalkedDistance","MedianWalkedDistance", "AvgWalkedDistanceGlobal", "MedianWalkedDistanceGlobal",
+          "AvgSOC", "MedianSOC", "AmountRecharge","AmountRechargeForced","AmountRechargeForcedFail",
+          "AmountRechargeBestEffort", "AmountRechargePerc", "AvgTimeInStation", "MedianTimeInStation",
+          "Deaths","Reroute","ReroutePerc","ReroutePercofRecharge"]
 
 
 def dict_to_str(s):
@@ -70,76 +70,75 @@ def mapf2(x):
     
     s = {}
     
-    s["provider"] = keysplit[0]
-    s["policy"] = keysplit[1]
-    s["algorithm"] = keysplit[2]
-    s["zones"] = keysplit[3]
-    s["acs"] = keysplit[4]
-    s["tankThreshold"] = keysplit[5]
-    s["walkingThreshold"] = keysplit[6]
+    s["Provider"] = keysplit[0]
+    s["Policy"] = keysplit[1]
+    s["Algorithm"] = keysplit[2]
+    s["Zones"] = keysplit[3]
+    s["Acs"] = keysplit[4]
+    s["TankThreshold"] = keysplit[5]
+    s["WalkingThreshold"] = keysplit[6]
 
-    s["typeS"] = len(df[df["Type"]=='s'])                            
-    s["typeE"] = len(df[df["Type"]=='e'])
+    s["TypeS"] = len(df[df["Type"]=='s'])                            
+    s["TypeE"] = len(df[df["Type"]=='e'])
     
-    s["avgWalkedDistance"] = df[
+    s["AvgWalkedDistance"] = df[
             (df["Type"]=='e') &
             (df["Distance"]>0)].Distance.mean()
-    s["medianWalkedDistance"] = df[
+    s["MedianWalkedDistance"] = df[
             (df["Type"]=='e')& 
             (df["Distance"]>0)].Distance.median()   
                                          
-    s["avgWalkedDistanceGlobal"] = df[
+    s["AvgWalkedDistanceGlobal"] = df[
             (df["Type"]=='e')].Distance.mean()                                
-    s["medianWalkedDistanceGlobal"] = df[
+    s["MedianWalkedDistanceGlobal"] = df[
             (df["Type"]=='e')].Distance.median()                                
             
-    s["avgSOC"] = df[(df["Type"]=='e')].Lvl.mean()
-    s["medianSOC"] = df[(df["Type"]=='e')].Lvl.median()
-    s["amountRecharge"] = len(df[
+    s["AvgSOC"] = df[(df["Type"]=='e')].Lvl.mean()
+    s["MedianSOC"] = df[(df["Type"]=='e')].Lvl.median()
+    s["AmountRecharge"] = len(df[
                                (df["Type"]=='e') &
                                (df["Recharged"]==True)])
-    s["amountRechargeForced"] = len(df[
+    s["AmountRechargeForced"] = len(df[
                               (df["Type"]=='e') &
                               (df["Recharged"]==True) & 
                               (df["ToRecharge"]==True)])
-    s["amountRechargeForcedFail"] = len(df[
+    s["AmountRechargeForcedFail"] = len(df[
                               (df["Type"]=='e') &
                               (df["Recharged"]==False) & 
                               (df["ToRecharge"]==True)])
-    s["amountRechargeBestEffort"] = len(df[
+    s["AmountRechargeBestEffort"] = len(df[
                               (df["Type"]=='e') &
                               (df["Recharged"]==True) & 
                               (df["ToRecharge"]==False)])
-    s["amountRechargePerc"] = s["amountRecharge"]*100 / s["typeE"]
+    s["AmountRechargePerc"] = s["AmountRecharge"]*100 / s["TypeE"]
 
     TmpRes                    = df[
                               (df["Type"]=='s') & 
                               (df["StartRecharge"]>0)]                        
 
     
-    s["avgTimeInStation"]  = (TmpRes['Stamp'] - TmpRes['StartRecharge']).mean()
+    s["AvgTimeInStation"]  = (TmpRes['Stamp'] - TmpRes['StartRecharge']).mean()
     
-    s["medianTimeInStation"]  = (TmpRes['Stamp'] - TmpRes['StartRecharge']).median()
+    s["MedianTimeInStation"]  = (TmpRes['Stamp'] - TmpRes['StartRecharge']).median()
             
-    s["deaths"] = len(df[df["Lvl"]< 0])                                                
-    s["reroute"] = len(df[
+    s["Deaths"] = len(df[df["Lvl"]< 0])                                                
+    s["Reroute"] = len(df[
             (df["Type"]=='e') & 
             (df["Distance"]>0)])
-    s["reroutePerc"] = s["reroute"]*100/s["typeE"]
-    s["reroutePercofRecharge"] = s["reroute"]*100/s["amountRecharge"] 
+    s["ReroutePerc"] = s["Reroute"]*100/s["TypeE"]
+    s["ReroutePercofRecharge"] = s["Reroute"]*100/s["AmountRecharge"] 
     
     return (key,s)
-
 
 
 def main():
     
     # establish the spark context
-    conf = SparkConf().setAppName("BigDataAnalytics")
+    conf = SparkConf().setAppName("Carsharing_BigDataAnalytics")
 
     sc = SparkContext(conf=conf)
 
-    text_file = sc.textFile("hdfs:///user/giordano/testfile/Simulator/File3.txt")
+    text_file = sc.textFile("hdfs:///user/giordano/Simulator/output/*")
     counts = text_file.map(mapf). \
     filter(lambda x: x[0]!="DELETE"). \
     groupByKey().map(mapf2).collectAsMap()
