@@ -59,6 +59,7 @@ def main():
     
     
     for BestEffort in [True]: #,False
+        break
         for AvaiableChargingStations in [6]: #2,4,
             for algorithm in ["max-time"]:#, "max-parking", "rnd"]:
                 jobs=[]

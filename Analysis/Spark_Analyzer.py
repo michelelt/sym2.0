@@ -4,11 +4,13 @@ import numpy as np
 import pandas as pd
 import os
 
-header = ["Provider","Policy","Algorithm","TankThreshold","Zones","Acs","WalkingThreshold","TypeS", "TypeE",
+header = ["Provider","Policy","Algorithm","Zones","Acs","TankThreshold","WalkingThreshold","TypeS", "TypeE",
           "AvgWalkedDistance","MedianWalkedDistance", "AvgWalkedDistanceGlobal", "MedianWalkedDistanceGlobal",
           "AvgSOC", "MedianSOC", "AmountRecharge","AmountRechargeForced","AmountRechargeForcedFail",
           "AmountRechargeBestEffort", "AmountRechargePerc", "AvgTimeInStation", "MedianTimeInStation",
           "Deaths","Reroute","ReroutePerc","ReroutePercofRecharge"]
+
+
 
 
 def dict_to_str(s):
