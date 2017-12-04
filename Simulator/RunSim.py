@@ -68,6 +68,7 @@ def ParkCar(RechargingStation_Zones, DistancesFrom_Zone_Ordered, ZoneID_Zone, Bo
     if(BestEffort and BookingEndPosition in RechargingStation_Zones):
 
         DistanceI = DistancesFrom_Zone_Ordered[BookingEndPosition][0]        
+        Distance = DistanceI[1].getDistance()
         ZoneI_ID = DistanceI[1].getZones()[0]
         ZoneI = ZoneID_Zone[ZoneI_ID]        
         Found = ZoneI.getParkingAtRechargingStations(BookedCar)

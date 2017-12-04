@@ -41,7 +41,7 @@ def mapf(s):
     if(sp[0]=="s"):    
         values = [sp[0],"-","-",float(sp[4]),float(sp[5]),float(sp[7]),int(sp[8]),int(sp[9]),"-","-"]
     else:
-        values = [sp[0],bool(sp[1]),bool(sp[2]),float(sp[4]),float(sp[5]),"-","-",int(sp[9]),float(sp[12]),int(sp[13])]    
+        values = [sp[0],sp[1],sp[2],float(sp[4]),float(sp[5]),"-","-",int(sp[9]),float(sp[12]),int(sp[13])]    
     #Type ToRecharge Recharged ID Lvl Distance Iter Recharge StartRecharge Stamp EventCoords ZoneC Discharge  TripDistance  FileID
     #0     1            2       3 4     5       6     7        8            9        10        11    12        13            14
 
@@ -99,19 +99,19 @@ def mapf2(x):
     s["MedianSOC"] = df[(df["Type"]=='e')].Lvl.median()
     s["AmountRecharge"] = len(df[
                                (df["Type"]=='e') &
-                               (df["Recharged"]==True)])
+                               (df["Recharged"]=='True')])
     s["AmountRechargeForced"] = len(df[
                               (df["Type"]=='e') &
-                              (df["Recharged"]==True) & 
-                              (df["ToRecharge"]==True)])
+                              (df["Recharged"]=='True') & 
+                              (df["ToRecharge"]=='True')])
     s["AmountRechargeForcedFail"] = len(df[
                               (df["Type"]=='e') &
-                              (df["Recharged"]==False) & 
-                              (df["ToRecharge"]==True)])
+                              (df["Recharged"]=='False') & 
+                              (df["ToRecharge"]=='True')])
     s["AmountRechargeBestEffort"] = len(df[
                               (df["Type"]=='e') &
-                              (df["Recharged"]==True) & 
-                              (df["ToRecharge"]==False)])
+                              (df["Recharged"]=='True') & 
+                              (df["ToRecharge"]=='False')])
     s["AmountRechargePerc"] = s["AmountRecharge"]*100 / s["TypeE"]
 
     TmpRes                    = df[
@@ -124,9 +124,7 @@ def mapf2(x):
     s["MedianTimeInStation"]  = (TmpRes['Stamp'] - TmpRes['StartRecharge']).median()
             
     s["Deaths"] = len(df[df["Lvl"]< 0])                                                
-    s["Reroute"] = len(df[
-            (df["Type"]=='e') & 
-            (df["Distance"]>0)])
+    s["Reroute"] = len(df[ (df["Type"]=='e') &  (df["Distance"]>0)])
     s["ReroutePerc"] = s["Reroute"]*100/s["TypeE"]
     s["ReroutePercofRecharge"] = s["Reroute"]*100/s["AmountRecharge"] 
     
