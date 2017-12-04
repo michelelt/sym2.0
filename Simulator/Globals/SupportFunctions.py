@@ -1,6 +1,3 @@
-
-
-
 '''
 Created on 13/nov/2017
 
@@ -169,7 +166,7 @@ def foutname(BestEffort,algorithm,AvaiableChargingStations,numberOfStations,tank
         else:
             policy="Hybrid"
 
-        fileid =  provider+"_"+policy +"_"+algorithm+"_"+str(AvaiableChargingStations)+"_"+str(numberOfStations)+"_"+str(tankThreshold) +"_"+str(walkingTreshold)
+        fileid =  provider+"_"+policy +"_"+algorithm+"_"+str(numberOfStations)+"_"+str(AvaiableChargingStations)+"_"+str(tankThreshold) +"_"+str(walkingTreshold)
         
     return policy, fileid,fileid+".txt"
 

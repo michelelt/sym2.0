@@ -26,12 +26,33 @@ def compose_path(policy,provider, acs, alg, z, tt):
     return p + "/output/"+policy+"_"+provider+"_"+ str(alg)+"_"+str(acs)+"_"+str(z)+"_"+str(tt)+".txt"
 
 
+
+header = ["provider","policy","algorithm","tankThreshold","zones","acs","walkingThreshold","typeS", "typeE",
+          "avgWalkedDistance","medianWalkedDistance", "avgWalkedDistanceGlobal", "medianWalkedDistanceGlobal",
+          "avgSOC", "medianSOC", "amountRecharge","amountRechargeForced","amountRechargeForcedFail",
+          "amountRechargeBestEffort", "amountRechargePerc", "avgTimeInStation", "medianTimeInStation",
+          "deaths","reroute","reroutePerc","reroutePercofRecharge"]
+
+
+def dict_to_str(s):
+    
+    OutStr = ""
+    for val in header:
+        if(type(s[val]) is int):
+            OutStr +="%d "%s[val]
+        elif(type(s[val]) is str):
+            OutStr +="%s "%s[val]
+        else:
+            OutStr +="%.2f "%s[val]
+
+    OutStr =OutStr[:-1]+"\n"
+    
+    
+    return OutStr
+
+
 def main():
-    header = ["provider","policy","algorithm","tankThreshold","zones","acs","typeE","typeS", 
-              "avgWalkedDistance","medianWalkedDistance", "avgWalkedDistanceGlobal", "medianWalkedDistanceGlobal",
-              "avgSOC", "medianSOC", "amountRecharge","amountRechargeForced","amountRechargeForcedFail",
-              "amountRechargeBestEffort", "amountRechargePerc", "avgTimeInStation", "medianTimeInStation",
-              "deaths","reroute","reroutePerc","reroutePercofRecharge"]
+    
     
     zones = [i for i in range(10,121,5)]
     policy = "Forced"
@@ -41,9 +62,10 @@ def main():
     
     
     HederStr = ""
-    for val in header[0:-1]:
+    for val in header:
         HederStr+=val+" "
-    HederStr+=header[-1]+"\n"
+    
+    HederStr =HederStr[:-1]+"\n"
     
     fout.write(HederStr)
     s={}
@@ -116,7 +138,7 @@ def main():
                         s["reroutePerc"] = s["reroute"]*100/s["typeE"]
                         s["reroutePercofRecharge"] = s["reroute"]*100/s["amountRecharge"]
                         
-                        OutStr = ""
+                        '''OutStr = ""
                         for val in header[0:-1]:
                             if(type(s[val]) is int):
                                 OutStr +="%d "%s[val]
@@ -124,9 +146,9 @@ def main():
                                 OutStr +="%s "%s[val]
                             else:
                                 OutStr +="%.2f "%s[val]
-                        OutStr+="%.2f\n"%s[header[-1]]
+                        OutStr+="%.2f\n"%s[header[-1]]'''
                         
-                        fout.write(OutStr)
+                        fout.write(dict_to_str(s))
                             
                     except e:
                         print(e)
