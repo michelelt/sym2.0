@@ -113,7 +113,7 @@ def dict_to_string(myDict):
         elif(type(myDict[k]) is float):
             outputString +="%.6f;"%myDict[k]
         elif(type(myDict[k]) is bool):
-            outputString +=str(myDict[k])
+            outputString +=str(myDict[k])+";"
         else:
             outputString +="[%.6f,%.6f];"%(myDict[k][0],myDict[k][1])
             
