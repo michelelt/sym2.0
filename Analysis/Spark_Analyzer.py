@@ -41,7 +41,7 @@ def mapf(s):
     if(sp[0]=="s"):    
         values = [sp[0],"-","-",float(sp[4]),float(sp[5]),float(sp[7]),int(sp[8]),int(sp[9]),"-","-"]
     else:
-        values = [sp[0],sp[1],sp[2],float(sp[4]),float(sp[5]),"-","-",int(sp[9]),float(sp[12]),int(sp[13])]    
+        values = [sp[0],sp[1],sp[2],float(sp[4]),float(sp[5]),"-","-",int(sp[9]),float(sp[12]),float(sp[13])]    
     #Type ToRecharge Recharged ID Lvl Distance Iter Recharge StartRecharge Stamp EventCoords ZoneC Discharge  TripDistance  FileID
     #0     1            2       3 4     5       6     7        8            9        10        11    12        13            14
 
@@ -112,7 +112,7 @@ def mapf2(x):
                               (df["Type"]=='e') &
                               (df["Recharged"]=='True') & 
                               (df["ToRecharge"]=='False')])
-    s["AmountRechargePerc"] = s["AmountRecharge"]*100 / s["TypeE"]
+    s["AmountRechargePerc"] = float(s["AmountRecharge"]*100) / (s["TypeE"])
 
     TmpRes                    = df[
                               (df["Type"]=='s') & 
@@ -125,14 +125,19 @@ def mapf2(x):
             
     s["Deaths"] = len(df[df["Lvl"]< 0])                                                
     s["Reroute"] = len(df[ (df["Type"]=='e') &  (df["Distance"]>0)])
-    s["ReroutePerc"] = s["Reroute"]*100/s["TypeE"]
-    s["ReroutePercofRecharge"] = s["Reroute"]*100/s["AmountRecharge"] 
+    s["ReroutePerc"] = float(s["Reroute"])*100/float(s["TypeE"])
+    s["ReroutePercofRecharge"] = float(s["Reroute"])*100/float(s["AmountRecharge"]) 
     
     return (key,s)
 
 
 def main():
     
+    output_directory ="/tmp/Carsharing_Output/"
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)    
+    os.system('rm -rf %s/*'%output_directory)
+        
     # establish the spark context
     conf = SparkConf().setAppName("Carsharing_BigDataAnalytics")
 
@@ -149,12 +154,13 @@ def main():
     
     HederStr =HederStr[:-1]+"\n"
     
-    fout = open("spark_scripts/output/out_analysis.txt","w")
+    fout = open(output_directory+"out_analysis.txt","w")
     
     fout.write(HederStr)
     for val in counts:
         outs = dict_to_str(counts[val])
-        fout.write(outs)            
+        fout.write(outs)     
+               
     return
 
 main()

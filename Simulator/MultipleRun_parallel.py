@@ -59,7 +59,6 @@ def main():
     
     
     for BestEffort in [True]: #,False
-        break
         for AvaiableChargingStations in [6]: #2,4,
             for algorithm in ["max-time"]:#, "max-parking", "rnd"]:
                 jobs=[]
@@ -103,9 +102,10 @@ def main():
         current_folder_str += current_folder[i]+"/"
     Analysis_folder =current_folder_str+"Analysis"    
 
-    os.system('scp %s/Spark_Analyzer.py bigdatadb:~/spark_scripts/Spark_Analyzer.py'%(Analysis_folder))
-    os.system('ssh bigdatadb spark2-submit --master local --deploy-mode client spark_scripts/Spark_Analyzer.py')
-    os.system('scp bigdatadb:~/spark_scripts/output/out_analysis.txt %s/output_analysis/'%(current_folder_str))
+    output_directory ="/tmp/Carsharing_Output"
+    os.system('scp %s/Spark_Analyzer.py bigdatadb:/tmp/CarSharing_Spark_Analyzer.py'%(Analysis_folder))
+    os.system('ssh bigdatadb spark2-submit --master local --deploy-mode client /tmp/CarSharing_Spark_Analyzer.py')
+    os.system('scp bigdatadb:%s/out_analysis.txt %s/output_analysis/'%(output_directory,current_folder_str))
 
     b = datetime.datetime.now()    
     c = (b - aglobal).total_seconds()                
