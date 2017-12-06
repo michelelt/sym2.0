@@ -5,13 +5,10 @@ Created on 13/nov/2017
 '''
 import sys
 import os
-p = os.path.abspath('..')
-sys.path.append(p+"/")
 
-from Simulator.Globals.SupportFunctions2 import *
+from Simulator.Globals.SupportFunctions import haversine
 
-
-from Simulator.Globals.GlobalVar import CorrectiveFactor
+from Simulator.Globals.GlobalVar import *
 
 
 
@@ -67,6 +64,8 @@ class Car(object):
 
         delta_c = -1 
         start_recharge = -1
+
+        distance = haversine(1.1,1.2,1.2,1.3)
         if(self.WasInRecharge):
             
             delta_c ,self.BatteryCurrentCapacity  = self.EvalCurrentCapacity(EndRecharge)
@@ -82,7 +81,7 @@ class Car(object):
         
         s = self.StartBookingPosition
         d = BookingEndPosition
-        distance = haversine(s[0],s[1],d[0],d[1])*CorrectiveFactor
+        distance = 1000#haversine(s[0],s[1],d[0],d[1])*CorrectiveFactor
         
         dist_km = distance/1000
         dc = dist_km * self.kwh_km
