@@ -19,7 +19,7 @@ import csv
 from Simulator.Globals.GlobalVar import *
 
 def setup_mongodb(CollectionName):   
-    """Setup mongodb session """    
+    """"Setup mongodb session """    
     try:        
         client = pymongo.MongoClient('bigdatadb.polito.it', 27017,ssl=True,ssl_cert_reqs=ssl.CERT_NONE) # server.local_bind_port is assigned local port                #client = pymongo.MongoClient()        
         client.server_info()        
