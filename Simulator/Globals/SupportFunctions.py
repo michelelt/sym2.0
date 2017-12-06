@@ -17,7 +17,6 @@ import random
 import csv
 
 from Simulator.Globals.GlobalVar import *
-from Simulator.Classes.Zone import *
 
 def setup_mongodb(CollectionName):   
     """Setup mongodb session """    
@@ -171,3 +170,4 @@ def foutname(BestEffort,algorithm,AvaiableChargingStations,numberOfStations,tank
         
     return policy, fileid,fileid+".txt"
 
+from Simulator.Classes.Zone import *
