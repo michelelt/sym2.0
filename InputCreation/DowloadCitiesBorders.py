@@ -37,6 +37,7 @@ def downloadCityBoardersFromOperationAreas():
 
     operativeAreasExtremes = {}
     f = codecs.open(p+"/input/car2go_oper_areas_limits.csv", "w", "utf-8")
+    f.write("city,maxLat,maxLon,minLat,minLon\n")
 
     for k in cities.keys():
         # k = "torino"
@@ -77,5 +78,3 @@ def downloadCityBoardersFromOperationAreas():
 
 
     return operativeAreasExtremes
-
-OAE = downloadCityBoardersFromOperationAreas()

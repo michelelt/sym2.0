@@ -1,9 +1,14 @@
 import sys
 import os
+
+
 p = os.path.abspath('..')
 sys.path.append(p+"/")
+
 from Simulator.Globals.SupportFunctions import *
 from Simulator.Globals.GlobalVar import *
+
+import pandas as pd
 
 
 import pickle
@@ -21,13 +26,20 @@ id_events = {}
 
 
 def main():
-    
+    # d = ReloadZonesCars()
+    #
+    # provider = d["provider"]
+    # city = d["city"]
+    # initdate = d["initdate"]
+    # finaldate = d["finaldate"]
     collection="enjoy_PermanentBookings"
     if(provider == "car2go"):
         collection = "PermanentBookings"
     enjoy_bookings = setup_mongodb(collection)
-    bookings = enjoy_bookings.find({"city": "Torino", 
-                                    "init_time" :{"$gt" : 1504648800 , "$lt" : 1509577200}});
+    bookings = enjoy_bookings.find({"city": "Torino",
+                                    "init_time" :{"$gt" : initDate , "$lt" : finalDate}})
+
+    print (bookings.count())
     
     #geolocator = Nominatim()    
     #location = geolocator.geocode("Torino")
@@ -51,21 +63,17 @@ def main():
 
         d2 = haversine(lon1, lat1, lon2, lat2)
 
-        
-        if(duration > 120 and duration<3600 and d2>500):
-            if( checkPerimeter(lat1, lon1) and checkPerimeter(lat2, lon2) or
-               (provider == "car2go" and  ((checkPerimeter(lat1, lon1) and checkCasellePerimeter(lat2, lon2)) or  (checkCasellePerimeter(lat1, lon1) and checkPerimeter(lat2, lon2))))): 
-                    ind = coordinates_to_index(coords[1])
-                    matrix_coords = zoneIDtoMatrixCoordinates(ind)
-                    if(matrix_coords not in matrix):
-                        matrix[matrix_coords] = [0,0,0]
-                    matrix[matrix_coords][0] += 1 
-                    matrix[matrix_coords][1] += int(finalt) - int(initt)
-                        
-
+        if duration > 120 and duration < 3600 and d2 > 500 :
+            if checkPerimeter(lat1, lon1) and checkPerimeter(lat2, lon2):
+                ind = coordinates_to_index(coords[1])
+                matrix_coords = zoneIDtoMatrixCoordinates(ind)
+                if (matrix_coords not in matrix):
+                    matrix[matrix_coords] = [0, 0, 0]
+                matrix[matrix_coords][0] += 1
+                matrix[matrix_coords][1] += int(finalt) - int(initt)
             else:
-                Discarded+=1   
-                           
+                Discarded += 1
+
     validzones = open("../input/"+provider+"_ValidZones.txt", "w")
     validzones.write("Lon; Lat; NParkings; SumTime; AvgTime\n")
 
@@ -77,14 +85,16 @@ def main():
         coords2 = "%d %.4f %.4f"%(c0,c3,c4)
 
         avgpark = float(matrix[val][1])/float(matrix[val][0])
-        
+
         validzones.write(coords2+ " %d %d %d\n"%(matrix[val][0],matrix[val][1],avgpark))
         
 
 
+    print ("discarded:", Discarded)
     print("End")
         
 main()
+
 
 '''
 if(d<30000 and d1<30000 and d2<30000):

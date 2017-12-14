@@ -22,30 +22,38 @@ def main():
         
     collection_parkings = setup_mongodb(collection)
     
-    parkings = collection_parkings.find({"city": "Torino", "init_time" : {"$gt" : 1509494400, "$lt": 1509667200}});
+    parkings = collection_parkings.find({"city": city, "init_time" : {"$gt" : initDate, "$lt": finalDate}});
     #geolocator = Nominatim()    
     #location = geolocator.geocode("Torino")
     #baselon = location.longitude
     #baselat = location.latitude
-
+    currentFleetSize = 0
     for val in parkings:
             coords = val['loc']['coordinates']
             lon1 = coords[0]
             lat1 = coords[1]
+
             #d = haversine(baselon, baselat, lon1, lat1)
+
+
             
-            if( checkPerimeter(lat1, lon1) or
-               (provider == "car2go" and checkCasellePerimeter(lat1, lon1))): 
-    
-                    if val['plate'] not in dict_plates:
-                        dict_plates[val['plate']]=PlatesData(val['init_time'], val["loc"]['coordinates'])
-                    else:
-                        if dict_plates[val['plate']].timestamp>=val['init_time']: #se non erano in ordine nel dataset iniziale
-                            dict_plates[val['plate']]=PlatesData(val['init_time'], val["loc"]['coordinates'])
+            # if( checkPerimeter(lat1, lon1) or
+            #    (provider == "car2go" and checkCasellePerimeter(lat1, lon1)) and
+            #     currentFleetSize <= FleetSize):
+            if checkPerimeter(lat1, lon1) and currentFleetSize <= fleetSize:
+                currentFleetSize += 1
+                if val['plate'] not in dict_plates:
+                    dict_plates[val['plate']] = PlatesData(val['init_time'], val["loc"]['coordinates'])
+                else:
+                    if dict_plates[val['plate']].timestamp >= val['init_time']: #se non erano in ordine nel dataset iniziale
+                        dict_plates[val['plate']] = PlatesData(val['init_time'], val["loc"]['coordinates'])
             else:
-                print("problema")
+                print("problem")
+
                 
-   
+   '''
+   allocare tutte le macchine poi vedi dove le piazza, magari ha senso allocarle tutte e considerare poi una flotta virtuale di sole x macchine
+   '''
 
     print(len(dict_plates))
 

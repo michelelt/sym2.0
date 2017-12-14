@@ -3,12 +3,15 @@ import os
 p = os.path.abspath('..')
 sys.path.append(p+"/")
 
+
+
 import pickle
 import operator
 from Simulator.Classes.Distance import Distance
 from Simulator.Classes.Car import Car
 from Simulator.Classes.Zone import Zone
 from Simulator.Globals.GlobalVar import *
+print (MaxLat)
 from Simulator.Globals.SupportFunctions import *
 from geopy.geocoders import Nominatim
 
@@ -121,4 +124,5 @@ def main():
     
     print("end")
     return
-main()
+# main()
+print (MaxLat)
