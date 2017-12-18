@@ -9,6 +9,6 @@ p = os.path.abspath('..')
 sys.path.append(p+"/")
 
 class PlatesData:
-    def __init__(self, timestamp,coordinates):
-        self.timestamp=timestamp
-        self.coordinates=coordinates
+    def __init__(self, timestamp, coordinates):
+        self.timestamp = timestamp
+        self.coordinates = coordinates

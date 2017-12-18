@@ -15,7 +15,6 @@ dict_plates={} #dictionary keys (plate), inside is a list of objects first appea
 
 def main():
 
-
     collection="enjoy_PermanentParkings"
     if(provider == "car2go"):
         collection = "PermanentParkings"
@@ -40,7 +39,7 @@ def main():
             # if( checkPerimeter(lat1, lon1) or
             #    (provider == "car2go" and checkCasellePerimeter(lat1, lon1)) and
             #     currentFleetSize <= FleetSize):
-            if checkPerimeter(lat1, lon1) and currentFleetSize <= fleetSize:
+            if checkPerimeter(lat1, lon1): #and currentFleetSize <= fleetSize:
                 currentFleetSize += 1
                 if val['plate'] not in dict_plates:
                     dict_plates[val['plate']] = PlatesData(val['init_time'], val["loc"]['coordinates'])
@@ -50,10 +49,7 @@ def main():
             else:
                 print("problem")
 
-                
-   '''
-   allocare tutte le macchine poi vedi dove le piazza, magari ha senso allocarle tutte e considerare poi una flotta virtuale di sole x macchine
-   '''
+
 
     print(len(dict_plates))
 

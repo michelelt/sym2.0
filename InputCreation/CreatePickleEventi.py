@@ -20,8 +20,6 @@ id_events = {}
 
 
 def main():
-    
-
 
     collection="enjoy_PermanentBookings"
     if(provider == "car2go"):
@@ -30,11 +28,14 @@ def main():
     #bookings = enjoy_bookings.find({"city": "Torino", 
     #                                "init_time" :{"$gt" : 1504648800 , "$lt" : 1509577200}});
 
-    bookings = enjoy_bookings.find({"city": "Torino", 
-                                    "init_time" :{"$gt" : 1504648800 , "$lt" : 1509577200}});
+    bookings = enjoy_bookings.find({"city": city,
+                                    "init_time": {
+                                        "$gt": initDate,
+                                        "$lt": finalDate}
+                                    })
 
     geolocator = Nominatim()    
-    location = geolocator.geocode("Torino")
+    location = geolocator.geocode(city)
     #baselon = location.longitude
     #baselat = location.latitude
 
@@ -59,27 +60,46 @@ def main():
 
             
             if(duration > 120 and duration<3600 and d2>500):
-                if( checkPerimeter(lat1, lon1) and checkPerimeter(lat2, lon2) or
-                   (provider == "car2go" and  ((checkPerimeter(lat1, lon1) and checkCasellePerimeter(lat2, lon2)) or  (checkCasellePerimeter(lat1, lon1) and checkPerimeter(lat2, lon2))))): 
+                if checkPerimeter(lat1, lon1) and checkPerimeter(lat2, lon2):
+                   #      or
+                   # (provider == "car2go" and  ((checkPerimeter(lat1, lon1) and checkCasellePerimeter(lat2, lon2)) or  (checkCasellePerimeter(lat1, lon1) and checkPerimeter(lat2, lon2))))):
+
                     NumEvents+=1
-                    id_events[i] = [booking['init_time'],booking['final_time'],EventBook(i,"s",  booking["origin_destination"]['coordinates'][0]),EventBook(i ,"e", booking["origin_destination"]['coordinates'][1])]
+                    id_events[i] = [booking['init_time'],
+                                    booking['final_time'],
+                                    EventBook(i, "s", booking["origin_destination"]['coordinates'][0]),
+                                    EventBook(i, "e", booking["origin_destination"]['coordinates'][1])]
+
+                    '''
+                    Dict bookings is the dictionary which contains in a timeStamps.
+                    The value is the a list where first element is the index of element and second element is the type of the element
+                    '''
+
                     if booking['init_time'] not in dict_bookings:
                         dict_bookings[booking['init_time']]=[]
-                    dict_bookings[booking['init_time']].append([i,"s"])
+
+                    dict_bookings[booking['init_time']].append([i, "s"])
+
                     if booking['final_time'] not in dict_bookings:
                         dict_bookings[booking['final_time']]=[]
-                    dict_bookings[booking['final_time']].append([i,"e"])        
+
+                    dict_bookings[booking['final_time']].append([i, "e"])
                     i=i+1
-                
+
+                    '''
+                    First 1000 element i create directly the dict with events  
+                    '''
                     if(i<1000):
                         if booking['init_time'] not in dict_bookings_short:
                             dict_bookings_short[booking['init_time']]=[]
+
                         dict_bookings_short[booking['init_time']].append(EventBook(i,"s",  booking["origin_destination"]['coordinates'][0]))
+
                         if booking['final_time'] not in dict_bookings_short:
                             dict_bookings_short[booking['final_time']]=[]
                         dict_bookings_short[booking['final_time']].append(EventBook(i ,"e", booking["origin_destination"]['coordinates'][1]))  
             else:
-                Discarted+=1   
+                Discarted += 1
                         
                     
 
@@ -98,6 +118,10 @@ def main():
     print("Start")
     to_delete = []
     EventDeleted=0
+
+    '''
+    Outlier removing
+    '''
     for stamp in dict_bookings:
         startbooking = 0
         for event in dict_bookings[stamp]:
@@ -106,8 +130,8 @@ def main():
         if(startbooking>30):
             EventDeleted+=startbooking
             to_delete.append(stamp)
-        
-        
+
+
     for stamp in to_delete:
         events_to_delete = []
         for event in dict_bookings[stamp]:
@@ -116,11 +140,11 @@ def main():
         for event in events_to_delete:
             InitTime = id_events[event][0]
             FinalTime = id_events[event][1]
-            InitInd = dict_bookings[InitTime].index([event,"s"])
-            FinalInd = dict_bookings[FinalTime].index([event,"e"])
+            InitInd = dict_bookings[InitTime].index([event, "s"])
+            FinalInd = dict_bookings[FinalTime].index([event, "e"])
 
-            del  dict_bookings[InitTime][InitInd]
-            del  dict_bookings[FinalTime][FinalInd]
+            del dict_bookings[InitTime][InitInd]
+            del dict_bookings[FinalTime][FinalInd]
             
     
         if(len(dict_bookings[stamp])==0):
@@ -137,7 +161,10 @@ def main():
             
 
 
-    print(NumEventsFiltered+EventDeleted,NumEventsFiltered,EventDeleted,Discarted)
+    print(NumEventsFiltered+EventDeleted,
+          NumEventsFiltered,
+          EventDeleted,
+          Discarted)
     
     ordered_dict_booking = collections.OrderedDict(sorted(dict_bookings.items()))
     ordered_dict_booking_short = collections.OrderedDict(sorted(dict_bookings_short.items()))

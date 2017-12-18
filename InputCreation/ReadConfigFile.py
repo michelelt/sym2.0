@@ -10,15 +10,12 @@ import datetime
 
 def readConfigFile():
     cityAreas = pd.read_csv(p+"/../input/car2go_oper_areas_limits.csv", header=0)
-    availableCities = cityAreas["city"]
     with open(p+"/../input/config.txt", "r") as f:
         content = f.readlines()
 
     d={}
     for x in content:
-        if len(x) == 0 :
-            pass
-        else:
+        if len(x) > 0:
             x = x.rstrip()
             line = x.split("=")
             d[line[0]] = line[1]
@@ -35,6 +32,20 @@ def readConfigFile():
     cityAreas = cityAreas.set_index("city")
     d["limits"] = cityAreas.loc[d["city"]]
 
+    global MaxLat, MaxLon, minLat, minLon, city, provider, initDate, finalDate, fleetSize
+
+    MaxLat = d["limits"]["maxLat"]
+    MaxLon = d["limits"]["maxLon"]
+
+    minLat = d["limits"]["minLat"]
+    minLon = d["limits"]["minLon"]
+
+    city = d["city"]
+
+    provider = d["provider"]
+    initDate = int(d["initdate"])
+    finalDate = int(d["finaldate"])
+    fleetSize = int(d["fleetSize"])
 
     return d
 

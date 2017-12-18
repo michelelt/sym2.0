@@ -13,7 +13,7 @@ from Simulator.Classes.Car import *
 
 class Zone(object):
       
-    def __init__(self, ID,AvaiableChargingStations):
+    def __init__(self, ID, AvaiableChargingStations):
         
         self.AvaiableChargingStations = AvaiableChargingStations
         self.ID = ID
@@ -21,7 +21,7 @@ class Zone(object):
         self.RechargedCars = []        
         return
         
-    def getBestRechargedCars(self,Stamp):
+    def getBestRechargedCars(self, Stamp):
         
         if(len(self.RechargedCars)==0): return ""
         

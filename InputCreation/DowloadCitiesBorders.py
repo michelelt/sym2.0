@@ -40,7 +40,6 @@ def downloadCityBoardersFromOperationAreas():
     f.write("city,maxLat,maxLon,minLat,minLon\n")
 
     for k in cities.keys():
-        # k = "torino"
         r = requests.get("http://www.car2go.com/api/v2.1/operationareas?oauth_consumer_key=polito&loc="+k+"&format=json")
         zonesDict = json.loads(r.content)
         zonesList = zonesDict ["placemarks"]
@@ -73,7 +72,7 @@ def downloadCityBoardersFromOperationAreas():
         operativeAreasExtremes[k] = {"maxLat":maxLat, "maxLon":maxLon, "minLat":minLat, "minLon":minLon}
         # myStr =  k + "," + str(maxLat) + "," + str(maxLon)  + "," + str(minLat) + "," + str(minLon)+ "\n"
         # myStr = myStr.encode("utf-8")
-        f.write(k + "," + str(maxLat) + "," + str(maxLon)  + "," + str(minLat) + "," + str(minLon)+ "\n")
+        f.write(k + "," + str(maxLat) + "," + str(maxLon) + "," + str(minLat) + "," + str(minLon) + "\n")
 
 
 

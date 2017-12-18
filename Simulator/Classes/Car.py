@@ -14,7 +14,7 @@ from Simulator.Globals.GlobalVar import *
 
 class Car(object):
     
-    def __init__(self, provider,ID):
+    def __init__(self, ID):
 
         self.ID = ID
 
@@ -65,7 +65,7 @@ class Car(object):
         delta_c = -1 
         start_recharge = -1
 
-        distance = haversine(1.1,1.2,1.2,1.3)
+        # distance = haversine(1.1,1.2,1.2,1.3)
         if(self.WasInRecharge):
             
             delta_c ,self.BatteryCurrentCapacity  = self.EvalCurrentCapacity(EndRecharge)
@@ -127,3 +127,5 @@ class Car(object):
 
         #print("Reset")
         return
+
+print provider

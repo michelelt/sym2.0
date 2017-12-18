@@ -10,6 +10,7 @@ Created on 13/nov/2017
 @author: dgiordan
 '''
 
+
 class Distance(object):
     
     def __init__(self, Distance):
@@ -18,7 +19,7 @@ class Distance(object):
         self.Distance = Distance
       
         return  
-    
+
     def getZones(self):
         shuffle(self.Zones)
         
@@ -27,7 +28,6 @@ class Distance(object):
     def getDistance(self):
     
         return self.Distance
-
 
     def appendZone(self,z):
         

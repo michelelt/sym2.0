@@ -16,15 +16,12 @@ from Simulator.Globals.SupportFunctions import *
 from geopy.geocoders import Nominatim
 
 
-
 def EvalDistance(i,j):
     Xi = i%NColumns
     Yi = int(i/NColumns)
     
     Xj = j%NColumns
     Yj = int(j/NColumns)
-    
-
 
     CentalLoni = (Xi+0.5)*ShiftLon+minLon
     CentalLati = (Yi+0.5)*ShiftLat+minLat
@@ -35,10 +32,10 @@ def EvalDistance(i,j):
 
     de = sqrt(pow((Xi-Xj),2)+pow((Yi-Yj),2)) 
 
-    return de,dh
+    return de, dh
+
 
 def AppendCaselle(i,ZoneDistances):
-
 
     Xi = i%NColumns
     Yi = int(i/NColumns)
@@ -58,6 +55,7 @@ def AppendCaselle(i,ZoneDistances):
 
     return
 
+
 def main():
 
     #ZoneID_Zone = {}   
@@ -70,8 +68,6 @@ def main():
     #baselon = location.longitude
     #baselat = location.latitude
 
-
-    
 
     DictPlates = pickle.load( open( "../input/"+provider+"_plates_appeareance_obj.pkl", "rb" ) )
     for plate in DictPlates:
@@ -110,7 +106,7 @@ def main():
                     ZoneDistances[j][de] = Distance(RealDistance) 
                 ZoneDistances[j][de].appendZone(i)
         
-        AppendCaselle(i,ZoneDistances)
+        #AppendCaselle(i,ZoneDistances)
             
     
     for i in range(0,len(ZoneDistances)):
@@ -125,4 +121,4 @@ def main():
     print("end")
     return
 # main()
-print (MaxLat)
+print ("Create Pickle Zone Dinstace - max lat:",MaxLat)
