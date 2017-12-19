@@ -16,7 +16,84 @@ import numpy as np
 import random
 import csv
 
-from Simulator.Globals.GlobalVar import *
+import Simulator.Globals.GlobalVar as GlobalVar
+
+
+def readConfigFile():
+    cityAreas = pd.read_csv(p+"/../input/car2go_oper_areas_limits.csv", header=0)
+    with open(p+"/../input/config.txt", "r") as f:
+        content = f.readlines()
+
+    d={}
+    for x in content:
+        if len(x) > 0:
+            x = x.rstrip()
+            line = x.split("=")
+            d[line[0]] = line[1]
+
+    # d["city"] = d["city"].
+    # for city in d["city"]:
+    #     if city not in availableCities:
+    #         print ("No entries for", "city")
+    #
+    # d["provider"] = d["provider"].split(",")
+
+    d["initdate"] = int(time.mktime(datetime.datetime.strptime(d["initdate"], "%Y-%m-%dT%H:%M:%S").timetuple()))
+    d["finaldate"] = int(time.mktime(datetime.datetime.strptime(d["finaldate"], "%Y-%m-%dT%H:%M:%S").timetuple()))
+    cityAreas = cityAreas.set_index("city")
+    d["limits"] = cityAreas.loc[d["city"]]
+
+    global MaxLat, MaxLon, minLat, minLon, city, provider, initDate, finalDate, fleetSize
+
+    MaxLat = d["limits"]["maxLat"]
+    MaxLon = d["limits"]["maxLon"]
+
+    minLat = d["limits"]["minLat"]
+    minLon = d["limits"]["minLon"]
+
+    city = d["city"]
+
+    provider = d["provider"]
+    initDate = int(d["initdate"])
+    finalDate = int(d["finaldate"])
+    fleetSize = int(d["fleetSize"])
+
+    return d
+
+def assingVariables():
+
+    d = readConfigFile()
+
+    GlobalVar.MaxLat = d["limits"]["maxLat"]
+    GlobalVar.MaxLon = d["limits"]["maxLon"]
+    GlobalVar.minLat = d["limits"]["minLat"]
+    GlobalVar.minLon = d["limits"]["minLon"]
+    GlobalVar.city = d["city"]
+    GlobalVar.provider = d["provider"]
+    GlobalVar.initDate = int(d["initdate"])
+    GlobalVar.finalDate = int(d["finaldate"])
+    GlobalVar.fleetSize = int(d["fleetSize"])
+
+    GlobalVar.CaselleCentralLat = 45.18843
+    GlobalVar.CaselleCentralLon = 7.6435
+
+    GlobalVar.CorrectiveFactor = 1  # .88
+
+    # GlobalVar.shiftLat500m = 0.0045
+    # GlobalVar.shiftLon500m = 0.00637
+
+    '''
+    add /2 in order to have a zonization 250x250
+    '''
+
+    GlobalVar.NColumns = int((GlobalVar.MaxLon - GlobalVar.minLon) / GlobalVar.shiftLon500m)
+    GlobalVar.NRows = int((GlobalVar.MaxLat - GlobalVar.minLat) / GlobalVar.shiftLat500m)
+    GlobalVar.MaxIndex = GlobalVar.NRows * GlobalVar.NColumns - 1
+
+    GlobalVar.ShiftLon = (GlobalVar.MaxLon - GlobalVar.minLon) / GlobalVar.NColumns
+    GlobalVar.ShiftLat = (GlobalVar.MaxLat - GlobalVar.minLat) / GlobalVar.NRows
+
+    return
 
 def setup_mongodb(CollectionName):   
     """"Setup mongodb session """    

@@ -13,77 +13,45 @@ import datetime
 p = os.path.abspath("..")
 sys.path.append(p+"/")
 
-def readConfigFile():
-    cityAreas = pd.read_csv(p+"/input/car2go_oper_areas_limits.csv", header=0)
-    availableCities = cityAreas["city"]
-    with open(p+"/input/config.txt", "r") as f:
-        content = f.readlines()
 
-    d={}
-    for x in content:
-        if len(x) == 0 :
-            pass
-        else:
-            x = x.rstrip()
-            line = x.split("=")
-            d[line[0]] = line[1]
+def assignValues():
 
-    # d["city"] = d["city"].
-    # for city in d["city"]:
-    #     if city not in availableCities:
-    #         print ("No entries for", "city")
-    #
-    # d["provider"] = d["provider"].split(",")
+    global MaxLat, MaxLon, minLat, minLon, city, provider, initDate, finalDate, fleetSize
+    global shiftLat500m, shiftLon500m, NColumns, NRows, MaxIndex, ShiftLon, ShiftLat
 
-    d["initdate"] = int(time.mktime(datetime.datetime.strptime(d["initdate"], "%Y-%m-%dT%H:%M:%S").timetuple()))
-    d["finaldate"] = int(time.mktime(datetime.datetime.strptime(d["finaldate"], "%Y-%m-%dT%H:%M:%S").timetuple()))
-    cityAreas = cityAreas.set_index("city")
-    d["limits"] = cityAreas.loc[d["city"]]
+    MaxLat = 0
+    MaxLon = 0
+    minLat = 0
+    minLon = 0
+    city = 0
+    provider = 0
+    initDate = 0
+    finalDate = 0
+    fleetSize = 0
+    CaselleCentralLat = 45.18843
+    CaselleCentralLon = 7.6435
 
+    CorrectiveFactor = 1#.88
 
-    return d
+    shiftLat500m = 0.0045
+    shiftLon500m = 0.00637
 
-d = readConfigFile()
+    '''
+    add /2 in order to have a zonization 250x250
+    '''
+    shiftLat250m = shiftLat500m
+    shiftLon250m = shiftLon500m
 
-MaxLat = d["limits"]["maxLat"]
-MaxLon = d["limits"]["maxLon"]
+    NColumns = 1
+    NRows = 1
+    MaxIndex = NRows*NColumns-1
 
-minLat = d["limits"]["minLat"]
-minLon = d["limits"]["minLon"]
+    ShiftLon = (MaxLon-minLon)/NColumns
+    ShiftLat = (MaxLat-minLat)/NRows
 
-city = d["city"]
-
-provider = d["provider"]
-initDate = int(d["initdate"])
-finalDate = int(d["finaldate"])
-fleetSize = int(d["fleetSize"])
+    return
 
 
-# CaselleCentralLat = 45.18843
-# CaselleCentralLon = 7.6435
-
-CorrectiveFactor = 1#.88
-
-
-shiftLat500m = 0.0045
-shiftLon500m = 0.00637
-
-'''
-add /2 in order to have a zonization 250x250
-'''
-shiftLat250m = shiftLat500m
-shiftLon250m = shiftLon500m
-
-
-NColumns = int((MaxLon-minLon)/shiftLon250m)
-Nrows = int((MaxLat-minLat)/shiftLat250m)
-MaxIndex = Nrows*NColumns-1
-
-
-ShiftLon = (MaxLon-minLon)/NColumns
-ShiftLat = (MaxLat-minLat)/Nrows
-#
-#
 # '''
 # add /2 in order to have a zonization 250x250
 # '''
@@ -93,3 +61,9 @@ ShiftLat = (MaxLat-minLat)/Nrows
 # CaselleminLon = CaselleCentralLon + ShiftLon
 
 # initDataSet = "###initDataSet###"
+
+
+
+
+
+
