@@ -15,6 +15,8 @@ import pandas as pd
 import numpy as np
 import random
 import csv
+import time
+import datetime
 
 import Simulator.Globals.GlobalVar as GlobalVar
 
@@ -43,20 +45,7 @@ def readConfigFile():
     cityAreas = cityAreas.set_index("city")
     d["limits"] = cityAreas.loc[d["city"]]
 
-    global MaxLat, MaxLon, minLat, minLon, city, provider, initDate, finalDate, fleetSize
-
-    MaxLat = d["limits"]["maxLat"]
-    MaxLon = d["limits"]["maxLon"]
-
-    minLat = d["limits"]["minLat"]
-    minLon = d["limits"]["minLon"]
-
-    city = d["city"]
-
-    provider = d["provider"]
-    initDate = int(d["initdate"])
-    finalDate = int(d["finaldate"])
-    fleetSize = int(d["fleetSize"])
+    print
 
     return d
 
@@ -92,6 +81,8 @@ def assingVariables():
 
     GlobalVar.ShiftLon = (GlobalVar.MaxLon - GlobalVar.minLon) / GlobalVar.NColumns
     GlobalVar.ShiftLat = (GlobalVar.MaxLat - GlobalVar.minLat) / GlobalVar.NRows
+
+    print ()
 
     return
 
@@ -144,9 +135,9 @@ def coordinates_to_index(coords):
           int((lon - GlobalVar.minLon) / GlobalVar.ShiftLon)
     if(ind<=GlobalVar.MaxIndex): return int(ind)
     
-    if(checkCasellePerimeter(lat,lon)): 
-        print("Caselle!!!")
-        return GlobalVar.MaxIndex+1
+    # if(checkCasellePerimeter(lat,lon)):
+    #     print("Caselle!!!")
+    #     return GlobalVar.MaxIndex+1
 
     return -1
 
@@ -158,11 +149,11 @@ def checkPerimeter(lat,lon):
 
     return False
 
-def checkCasellePerimeter(lat,lon):
-    
-        if(lon > CaselleminLon  and  lon< CaselleMaxLon and lat > CaselleminLat  and  lat< CaselleMaxLat): return True
-
-        return False
+# def checkCasellePerimeter(lat,lon):
+#
+#         if(lon > CaselleminLon  and  lon< CaselleMaxLon and lat > CaselleminLat  and  lat< CaselleMaxLat): return True
+#
+#         return False
     
     
 def zoneIDtoCoordinates(ID):
@@ -245,7 +236,7 @@ def foutname(BestEffort,algorithm,AvaiableChargingStations,numberOfStations,tank
         else:
             policy="Hybrid"
 
-        fileid = provider+"_"+\
+        fileid = gv.provider+"_"+\
                  policy +"_"+\
                  algorithm+"_"+\
                  str(numberOfStations)+"_"+\

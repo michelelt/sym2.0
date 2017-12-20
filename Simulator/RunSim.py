@@ -12,6 +12,11 @@ from Simulator.Globals.SupportFunctions import *
 import datetime
 import click
 
+import Simulator.Globals.SupportFunctions as sf
+import Simulator.Globals.GlobalVar as gv
+gv.init()
+sf.assingVariables()
+
 
 def SearchAvailableCar(RechargingStation_Zones,ZoneI,Stamp):
 
@@ -94,7 +99,7 @@ def WriteOutHeader(file, parametersDict):
     
     for key in HeaderOreder:
         file.write(key + ":" + str(parametersDict[key])+"\n")
-    file.write(initDataSet+"\n")
+    file.write("####"+"\n")
 
     return
 
@@ -163,7 +168,7 @@ def RunSim(BestEffort,
     fout2 = open("../output/debugproblem.txt","w")
     a = datetime.datetime.now()
     WriteOutHeader(fout, {
-    "Provider": provider,
+    "Provider": gv.provider,
     "Policy": policy,                          
     "Algorithm": algorithm,
     "ChargingStations":numberOfStations,

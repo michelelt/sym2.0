@@ -8,12 +8,12 @@ import os
 p = os.path.abspath('..')
 sys.path.append(p+"/")
 
-from Simulator.Globals.GlobalVar import *
+import Simulator.Globals.GlobalVar as gv
 from Simulator.Classes.Car import *
 
 class Zone(object):
       
-    def __init__(self, ID,AvaiableChargingStations):
+    def __init__(self, ID, AvaiableChargingStations):
         
         self.AvaiableChargingStations = AvaiableChargingStations
         self.ID = ID
@@ -23,7 +23,7 @@ class Zone(object):
         
     def getBestRechargedCars(self,Stamp):
         
-        if(len(self.RechargedCars)==0): return ""
+        if len(self.RechargedCars)==0: return ""
         
         BestCar = ""
         BestLvl = -1
@@ -38,14 +38,12 @@ class Zone(object):
                     BestLvl = CarILvl
     
         if(BestCar != ""): del self.RechargedCars[self.RechargedCars.index(BestCar)]
-        
-        
-        
+
         return BestCar
     
     def getBestCars(self):
 
-        if(len(self.Cars)==0): return ""
+        if len(self.Cars)==0: return ""
         
         BestCar = ""
 
@@ -79,19 +77,17 @@ class Zone(object):
     def getNumCar(self):
         
         return len(self.Cars)
-    
-    
+
     def setCars(self,cars):
 
         self.RechargedCars = []        
         
         CarVector = []
         for CarI in cars:
-            CarVector.append(Car(provider,CarI.ID))        
+            CarVector.append(Car(gv.provider, CarI.ID))
         
         self.Cars = CarVector
 
-        
         return
 
     def setAvaiableChargingStations(self, n):

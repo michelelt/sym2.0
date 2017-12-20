@@ -4,26 +4,25 @@ p = os.path.abspath('..')
 sys.path.append(p+"/")
 
 from Simulator.RunSim import *
-from Simulator.Globals.GlobalVar import * 
 import datetime as datetime
 import pickle
-
 import multiprocessing
 from multiprocessing import Process
-
 #import subprocess
 
+import Simulator.Globals.SupportFunctions as sf
+import Simulator.Globals.GlobalVar as gv
+gv.init()
+sf.assingVariables()
 
 def main():
-    
+
 
     ##TO AVOID: "OSError: [Errno 24] Too many open files"     
     #bashCommand = "ulimit -n 2048"
     #process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)
     #process.communicate()
     ###
-    
-
 
     walkingTreshold = 1000000#int(sys.argv[4]) # in [m]
 
@@ -32,19 +31,19 @@ def main():
     aglobal = datetime.datetime.now()
     nsimulations = 0
     a = datetime.datetime.now()
-    Stamps_Events = pickle.load( open( "../events/"+provider+"_sorted_dict_events_obj.pkl", "rb" ) )
+    Stamps_Events = pickle.load( open( "../events/"+ gv.provider + "_sorted_dict_events_obj.pkl", "rb" ) )
     b = datetime.datetime.now()    
     c = (b - a).total_seconds()
     print("End Loading Events: "+str(int(c)))
 
 
     a = datetime.datetime.now()    
-    DistancesFrom_Zone_Ordered = pickle.load( open( "../input/"+provider+"_ZoneDistances.p", "rb" ) )
+    DistancesFrom_Zone_Ordered = pickle.load( open( "../input/"+ gv.provider + "_ZoneDistances.p", "rb" ) )
     b = datetime.datetime.now()    
     c = (b - a).total_seconds()
     print("End Loading Zones: "+str(int(c)))
     
-    ZoneCars = pickle.load( open( "../input/"+provider+"_ZoneCars.p", "rb" ) )
+    ZoneCars = pickle.load( open( "../input/"+ gv.provider +"_ZoneCars.p", "rb" ) )
 
 
 
@@ -60,7 +59,7 @@ def main():
     
     for BestEffort in [True]: #,False
         for AvaiableChargingStations in [6]: #2,4,
-            for algorithm in ["max-time"]:#, "max-parking", "rnd"]:
+            for algorithm in ["max_time"]:#, "max-parking", "rnd"]:
                 jobs=[]
                 for numberOfStations in zones:
                     for tankThreshold in tt:
@@ -68,7 +67,8 @@ def main():
                         
                         RechargingStation_Zones = loadRecharing(algorithm, numberOfStations)
                         p = Process(target=RunSim,args = (BestEffort,
-                                                          algorithm.replace("_","-"),
+                                                          # algorithm.replace("_","-"),
+                                                          algorithm,
                                                           AvaiableChargingStations,
                                                           tankThreshold,
                                                           walkingTreshold,
@@ -105,14 +105,12 @@ def main():
     output_directory ="/tmp/Carsharing_Output"
     os.system('scp %s/Spark_Analyzer.py bigdatadb:/tmp/CarSharing_Spark_Analyzer.py'%(Analysis_folder))
     os.system('ssh bigdatadb spark2-submit --master local --deploy-mode client /tmp/CarSharing_Spark_Analyzer.py')
-    os.system('scp bigdatadb:%s/out_analysis.txt %s/output_analysis/'%(output_directory,current_folder_str))
+    os.system('scp bigdatadb:%s/out_analysis.txt %s/output_analysis/'%(output_directory, current_folder_str))
 
     b = datetime.datetime.now()    
     c = (b - aglobal).total_seconds()                
     
-    print("Analyze data with Spark took %d seconds"%(c))
-
-
+    print("Analyze data with Spark took %d seconds" %(c))
 
     return 
         

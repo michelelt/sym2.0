@@ -9,7 +9,7 @@ p = os.path.abspath('..')
 sys.path.append(p+"/")
 
 class EventBook:
-    def __init__(self, id_booking,type,coordinates):
+    def __init__(self, id_booking, type, coordinates):
 
         self.id_booking=id_booking
         self.type=type
