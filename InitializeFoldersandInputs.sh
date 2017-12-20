@@ -14,10 +14,7 @@ fi
 
 cd InputCreation
 python3 DowloadCitiesBorders.py
-#cd ../Simulator/Globals/
-#python3 GlobalVar.py
-#cd ../../InputCreation
 python3 CreateValidZones.py
 python3 CreateCarInitDataset.py
-#python3 CreatePickleEventi.py
-#python3 CreatePickleZoneDistance.py
+python3 CreatePickleEventi.py
+python3 CreatePickleZoneDistance.py

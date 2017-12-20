@@ -14,7 +14,7 @@ p = os.path.abspath("..")
 sys.path.append(p+"/")
 
 
-def assignValues():
+def init():
 
     global MaxLat, MaxLon, minLat, minLon, city, provider, initDate, finalDate, fleetSize
     global shiftLat500m, shiftLon500m, NColumns, NRows, MaxIndex, ShiftLon, ShiftLat

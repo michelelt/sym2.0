@@ -2,14 +2,15 @@ import sys
 import os
 p = os.path.abspath('..')
 sys.path.append(p+"/")
-from Simulator.Globals.SupportFunctions import *
-from Simulator.Classes.EventBook import EventBook  
-from Simulator.Globals.GlobalVar import *
-
-
+from Simulator.Classes.EventBook import EventBook
 import pickle
 import collections
 from geopy.geocoders import Nominatim
+
+import Simulator.Globals.SupportFunctions as sf
+import Simulator.Globals.GlobalVar as gv
+gv.init()
+sf.assingVariables()
 
       
 dataset_bookings=[]
@@ -18,23 +19,18 @@ dict_bookings_short = {}
 id_events = {}
 
 
-
 def main():
-    
-
 
     collection="enjoy_PermanentBookings"
-    if(provider == "car2go"):
+    if(gv.provider == "car2go"):
         collection = "PermanentBookings"
-    enjoy_bookings = setup_mongodb(collection)
-    #bookings = enjoy_bookings.find({"city": "Torino", 
-    #                                "init_time" :{"$gt" : 1504648800 , "$lt" : 1509577200}});
+    enjoy_bookings = sf.setup_mongodb(collection)
 
-    bookings = enjoy_bookings.find({"city": "Torino", 
-                                    "init_time" :{"$gt" : 1504648800 , "$lt" : 1509577200}});
+    bookings = enjoy_bookings.find({"city": gv.city,
+                                    "init_time" :{"$gt" : gv.initDate , "$lt" : gv.finalDate}});
 
-    geolocator = Nominatim()    
-    location = geolocator.geocode("Torino")
+    # geolocator = Nominatim()
+    # location = geolocator.geocode("Torino")
     #baselon = location.longitude
     #baselat = location.latitude
 
@@ -55,12 +51,13 @@ def main():
             lat2 = coords[1][1]
             #d = haversine(baselon, baselat, lon2, lat2)
             #d1 = haversine(baselon, baselat, lon1, lat1)
-            d2 = haversine(lon1, lat1, lon2, lat2)
+            d2 = sf.haversine(lon1, lat1, lon2, lat2)
 
             
             if(duration > 120 and duration<3600 and d2>500):
-                if( checkPerimeter(lat1, lon1) and checkPerimeter(lat2, lon2) or
-                   (provider == "car2go" and  ((checkPerimeter(lat1, lon1) and checkCasellePerimeter(lat2, lon2)) or  (checkCasellePerimeter(lat1, lon1) and checkPerimeter(lat2, lon2))))): 
+                # if( sf.checkPerimeter(lat1, lon1) and sfcheckPerimeter(lat2, lon2) or
+                #    (provider == "car2go" and  ((checkPerimeter(lat1, lon1) and checkCasellePerimeter(lat2, lon2)) or  (checkCasellePerimeter(lat1, lon1) and checkPerimeter(lat2, lon2))))):
+                if sf.checkPerimeter(lat1, lon1) and sf.checkPerimeter(lat2, lon2):
                     NumEvents+=1
                     id_events[i] = [booking['init_time'],booking['final_time'],EventBook(i,"s",  booking["origin_destination"]['coordinates'][0]),EventBook(i ,"e", booking["origin_destination"]['coordinates'][1])]
                     if booking['init_time'] not in dict_bookings:
@@ -79,15 +76,13 @@ def main():
                             dict_bookings_short[booking['final_time']]=[]
                         dict_bookings_short[booking['final_time']].append(EventBook(i ,"e", booking["origin_destination"]['coordinates'][1]))  
             else:
-                Discarted+=1   
-                        
-                    
+                Discarted+=1
 
-    with open("../events/"+provider+"_dict_bookings.pkl", 'wb') as handle:
-        pickle.dump( dict_bookings,handle)
+    with open("../events/" + gv.provider + "_dict_bookings.pkl", 'wb') as handle:
+        pickle.dump( dict_bookings, handle)
     
-    with open("../events/"+provider+"_id_events.pkl", 'wb') as handle:
-        pickle.dump( id_events,handle)
+    with open("../events/" + gv.provider + "_id_events.pkl", 'wb') as handle:
+        pickle.dump( id_events, handle)
     
     print("End Pickles")
     '''exit(0)
@@ -106,8 +101,7 @@ def main():
         if(startbooking>30):
             EventDeleted+=startbooking
             to_delete.append(stamp)
-        
-        
+
     for stamp in to_delete:
         events_to_delete = []
         for event in dict_bookings[stamp]:
@@ -126,8 +120,6 @@ def main():
         if(len(dict_bookings[stamp])==0):
             del dict_bookings[stamp]
     
-    
-    
     for stamp in dict_bookings:
         for i in range(0,len(dict_bookings[stamp])):
             NumEventsFiltered+=1
@@ -137,19 +129,22 @@ def main():
             
 
 
-    print(NumEventsFiltered+EventDeleted,NumEventsFiltered,EventDeleted,Discarted)
+    print("CPE, Num Events Filtered + Event deleted:",NumEventsFiltered+EventDeleted)
+    print("CPE, Num Events Filtered:", NumEventsFiltered)
+    print("CPE, Event Deleted:", EventDeleted)
+    print("CPE, Dicarded:", Discarted)
     
     ordered_dict_booking = collections.OrderedDict(sorted(dict_bookings.items()))
     ordered_dict_booking_short = collections.OrderedDict(sorted(dict_bookings_short.items()))
    
 
-    with open("../events/"+provider+"_sorted_dict_events_obj.pkl", 'wb') as handle:
-        pickle.dump( ordered_dict_booking,handle)
+    with open("../events/" + gv.provider + "_sorted_dict_events_obj.pkl", 'wb') as handle:
+        pickle.dump( ordered_dict_booking, handle)
 
-    with open("../events/"+provider+"_sorted_dict_events_obj_short.pkl", 'wb') as handle:
-        pickle.dump( ordered_dict_booking_short,handle)
-    
+    with open("../events/" + gv.provider + "_sorted_dict_events_obj_short.pkl", 'wb') as handle:
+        pickle.dump( ordered_dict_booking_short, handle)
 
+    print ("CPE, end")
 
 main()
 

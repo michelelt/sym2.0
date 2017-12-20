@@ -20,8 +20,8 @@ import Simulator.Globals.GlobalVar as GlobalVar
 
 
 def readConfigFile():
-    cityAreas = pd.read_csv(p+"/../input/car2go_oper_areas_limits.csv", header=0)
-    with open(p+"/../input/config.txt", "r") as f:
+    cityAreas = pd.read_csv(p+"/input/car2go_oper_areas_limits.csv", header=0)
+    with open(p+"/input/config.txt", "r") as f:
         content = f.readlines()
 
     d={}
@@ -139,12 +139,14 @@ def coordinates_to_index(coords):
     lon = coords[0]
     lat = coords[1]
     
-    ind = int((lat - minLat)/ShiftLat)*NColumns + int((lon - minLon)/ShiftLon)
-    if(ind<=MaxIndex): return int(ind)
+    ind = int((lat - GlobalVar.minLat) / GlobalVar.ShiftLat) * \
+          GlobalVar.NColumns + \
+          int((lon - GlobalVar.minLon) / GlobalVar.ShiftLon)
+    if(ind<=GlobalVar.MaxIndex): return int(ind)
     
     if(checkCasellePerimeter(lat,lon)): 
         print("Caselle!!!")
-        return MaxIndex+1
+        return GlobalVar.MaxIndex+1
 
     return -1
 
@@ -152,44 +154,42 @@ def coordinates_to_index(coords):
 
 def checkPerimeter(lat,lon):
 
-    if(lon > minLon  and  lon< MaxLon and lat > minLat  and  lat< MaxLat): return True
-    
-    
+    if(lon > GlobalVar.minLon  and  lon < GlobalVar.MaxLon and lat > GlobalVar.minLat  and  lat< GlobalVar.MaxLat): return True
+
     return False
 
 def checkCasellePerimeter(lat,lon):
     
         if(lon > CaselleminLon  and  lon< CaselleMaxLon and lat > CaselleminLat  and  lat< CaselleMaxLat): return True
-    
+
         return False
     
     
 def zoneIDtoCoordinates(ID):
     
-    Xi = ID%NColumns
-    Yi = int(ID/NColumns)
+    Xi = ID % GlobalVar.NColumns
+    Yi = int(ID / GlobalVar.NColumns)
     
 
-    CentalLoni = (Xi+0.5)*ShiftLon+minLon
-    CentalLati = (Yi+0.5)*ShiftLat+minLat
-
+    CentalLoni = (Xi + 0.5) * GlobalVar.ShiftLon + GlobalVar.minLon
+    CentalLati = (Yi + 0.5) * GlobalVar.ShiftLat + GlobalVar.minLat
 
     return [CentalLoni, CentalLati]
 
 def MatrixCoordinatesToID(Xi,Yi):
 
     
-    ID = Yi*NColumns + Xi
+    ID = Yi * GlobalVar.NColumns + Xi
     
     return ID
 
 def zoneIDtoMatrixCoordinates(ID):
     
-    Xi = ID%NColumns
-    Yi = int(ID/NColumns)
+    Xi = ID % GlobalVar.NColumns
+    Yi = int(ID / GlobalVar.NColumns)
 
-    CentalLoni = (Xi+0.5)*ShiftLon+minLon
-    CentalLati = (Yi+0.5)*ShiftLat+minLat
+    CentalLoni = (Xi + 0.5) * GlobalVar.ShiftLon + GlobalVar.minLon
+    CentalLati = (Yi + 0.5) * GlobalVar.ShiftLat + GlobalVar.minLat
     
     return (ID, Xi, Yi, CentalLoni, CentalLati)
 
@@ -206,16 +206,16 @@ def ReloadZonesCars(ZoneCars, ZoneID_Zone, AvaiableChargingStations):
 
 def loadRecharing(method, numberOfStations):
     Stations = []
-    csvfilePath = p+"/input/"+provider+"_"+method+"500.csv"
+    csvfilePath = p+"/input/"+ GlobalVar.provider + "_" + method + "500.csv"
     if (method == "rnd"):
 
-        zones = pd.read_csv("../input/"+provider+"_ValidZones.txt", sep=" ", header=0)
+        zones = pd.read_csv("../input/" + GlobalVar.provider + "_ValidZones.txt", sep=" ", header=0)
         zones_list = list(zones.index)
         # while len(Stations)<=numberOfStations:
             # rn = np.random.randint(NColumns*Nrows, size = 1)
             # if(rn not in Stations): Stations.append(rn)
         Stations2 = random.sample(zones_list, numberOfStations)
-        for i in range(0,len(Stations2)):
+        for i in range(0, len(Stations2)):
             Stations.append(np.array(Stations2[i]))
 
 
@@ -245,7 +245,13 @@ def foutname(BestEffort,algorithm,AvaiableChargingStations,numberOfStations,tank
         else:
             policy="Hybrid"
 
-        fileid =  provider+"_"+policy +"_"+algorithm+"_"+str(numberOfStations)+"_"+str(AvaiableChargingStations)+"_"+str(tankThreshold) +"_"+str(walkingTreshold)
+        fileid = provider+"_"+\
+                 policy +"_"+\
+                 algorithm+"_"+\
+                 str(numberOfStations)+"_"+\
+                 str(AvaiableChargingStations)+"_"+\
+                 str(tankThreshold) +"_"+\
+                 str(walkingTreshold)
         
     return policy, fileid,fileid+".txt"
 
