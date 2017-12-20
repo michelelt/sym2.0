@@ -8,28 +8,30 @@ import requests
 import json
 import pprint
 import codecs
+import pprint
 
 
 def downloadCityBoarders():
     r = requests.get("http://www.car2go.com/api/v2.1/locations?oauth_consumer_key=polito&format=json")
 
-    citiedBorders = json.loads(r.content)
-    citiedBorders = citiedBorders["location"]
+
+    citiesBorders = json.loads(r.content.decode('utf-8'))
+    citiesBorders = citiesBorders["location"]
 
     d = {}
 
-    for i in range(0, len(citiedBorders)):
+    for i in range(0, len(citiesBorders)):
         coordsDict ={"lowerRight":
-                        { "lat": citiedBorders[i]["mapSection"]["lowerRight"]["latitude"],
-                          "lon": citiedBorders[i]["mapSection"]["lowerRight"]["longitude"]
+                        { "lat": citiesBorders[i]["mapSection"]["lowerRight"]["latitude"],
+                          "lon": citiesBorders[i]["mapSection"]["lowerRight"]["longitude"]
                         },
                      "upperLeft":
-                         { "lat": citiedBorders[i]["mapSection"]["upperLeft"]["latitude"],
-                           "lon": citiedBorders[i]["mapSection"]["upperLeft"]["longitude"]
+                         { "lat": citiesBorders[i]["mapSection"]["upperLeft"]["latitude"],
+                           "lon": citiesBorders[i]["mapSection"]["upperLeft"]["longitude"]
                          }
                      }
 
-        d[citiedBorders[i]["locationName"]] = coordsDict
+        d[citiesBorders[i]["locationName"]] = coordsDict
     return d
 
 def downloadCityBoardersFromOperationAreas():
@@ -42,11 +44,11 @@ def downloadCityBoardersFromOperationAreas():
     for k in cities.keys():
         # k = "torino"
         r = requests.get("http://www.car2go.com/api/v2.1/operationareas?oauth_consumer_key=polito&loc="+k+"&format=json")
-        zonesDict = json.loads(r.content)
+        zonesDict = json.loads(r.content.decode("utf-8"))
         zonesList = zonesDict ["placemarks"]
 
-        maxLat = None
-        maxLon = None
+        maxLat = 0
+        maxLon = 0
         minLat = 2000
         minLon = 2000
         for i in range(len(zonesList)):
@@ -78,3 +80,5 @@ def downloadCityBoardersFromOperationAreas():
 
 
     return operativeAreasExtremes
+
+downloadCityBoardersFromOperationAreas()
