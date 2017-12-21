@@ -69,10 +69,25 @@ def main():
         c4 = val[4]
 
         coords2 = "%d %.4f %.4f"%(c0,c3,c4)
-
         avgpark = float(matrix[val][1])/float(matrix[val][0])
-
         validzones.write(coords2+ " %d %d %d\n"%(matrix[val][0],matrix[val][1],avgpark))
+
+
+    
+    sorted_Zone_NParkings = sorted(Zone_NParkings.items(), key=lambda x:x[1], reverse=True)
+    
+    fout = open("../input/"+provider+"_max-parking500.csv","w")
+    fout.write(",lat,lon,zone_id n_parkings\n")
+    for val in sorted_Zone_NParkings:
+        strout = "%d %.6f %.6f %.6f %d %d\n"%(val[0][0],val[0][1],val[0][1],val[0][0],val[1])
+        
+    sorted_Zone_TotalParkingTime = sorted(Zone_TotalParkingTime.items(), key=lambda x:x[1], reverse=True)
+    fout = open("../input/"+provider+"_max-time500.csv","w")
+    fout.write(",lat,lon,zone_id n_parkings\n")
+    for val in sorted_Zone_TotalParkingTime:
+        strout = "%d %.6f %.6f %.6f %d %d\n"%(val[0][0],val[0][1],val[0][1],val[0][0],val[1])
+
+
 
     print ("CVZ, discarded:", Discarded)
     print("CVZ, End")

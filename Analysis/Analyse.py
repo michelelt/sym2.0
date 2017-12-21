@@ -6,8 +6,10 @@ import os
 p = os.path.abspath('..')
 sys.path.append(p+"/")
 
-from Simulator.Globals.GlobalVar import *
-from Simulator.Globals.SupportFunctions import *
+import Simulator.Globals.GlobalVar as gv
+import Simulator.Globals.SupportFunctions as sf
+gv.init()
+sf.assingVariables()
 
 
 label = {
@@ -23,7 +25,7 @@ label = {
 
 
 def compose_path(policy,provider, acs, alg, z, tt):
-    return p + "/output/"+policy+"_"+provider+"_"+ str(alg)+"_"+str(acs)+"_"+str(z)+"_"+str(tt)+".txt"
+    return p + "/output/"+policy+"_"+gv.provider+"_"+ str(alg)+"_"+str(acs)+"_"+str(z)+"_"+str(tt)+".txt"
 
 
 
@@ -77,7 +79,7 @@ def main():
                 for t in tt:
                     print(processed)
                     processed+=1
-                    path = compose_path(policy,provider, acs, algorithm, z, t)
+                    path = compose_path(policy, gv.provider, acs, algorithm, z, t)
                     try:
                         f = open(path)
                         '''d = {}
@@ -150,8 +152,8 @@ def main():
                         
                         fout.write(dict_to_str(s))
                             
-                    except e:
-                        print(e)
+                    except :
+                        #print(e)
                         print(path)
                         exit(0)
                         pass
