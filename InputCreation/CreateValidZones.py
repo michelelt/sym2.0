@@ -11,8 +11,13 @@ import datetime
 #import tzlocal  # $ pip install tzlocal
 import Simulator.Globals.SupportFunctions as sf
 import Simulator.Globals.GlobalVar as gv
+import pprint
+import pandas as pd
+
 gv.init()
 sf.assingVariables()
+pp = pprint.PrettyPrinter(indent=4)
+
 
 
       
@@ -60,38 +65,42 @@ def main():
             else:
                 Discarded += 1
 
-    validzones = open("../input/" + gv.provider + "_ValidZones.txt", "w")
-    validzones.write("Lon; Lat; NParkings; SumTime; AvgTime\n")
+    validzones = open("../input/" + gv.provider + "_ValidZones.csv", "w")
+    validzones.write("id,Lon,Lat,NParkings,SumTime,AvgTime\n")
 
+    Zone_TotalParkingTime = {}
+    Zone_NParkings = {}
     for val in matrix:
         c0 = val[0]
         c3 = val[3]
         c4 = val[4]
 
-        coords2 = "%d %.4f %.4f"%(c0,c3,c4)
+        coords2 = "%d,%.4f,%.4f,"%(c0,c3,c4)
         avgpark = float(matrix[val][1])/float(matrix[val][0])
-        validzones.write(coords2+ " %d %d %d\n"%(matrix[val][0],matrix[val][1],avgpark))
+        validzones.write(coords2 + "%d,%d,%d\n" %(matrix[val][0], matrix[val][1], avgpark))
 
+        Zone_NParkings[(c0,c3,c4)] = matrix[val][0]
+        Zone_TotalParkingTime[(c0,c3,c4)] = matrix[val][1]
 
-    
     sorted_Zone_NParkings = sorted(Zone_NParkings.items(), key=lambda x:x[1], reverse=True)
-    
-    fout = open("../input/"+provider+"_max-parking500.csv","w")
-    fout.write(",lat,lon,zone_id n_parkings\n")
+    fout = open("../input/"+gv.provider+"_max-parking500.csv", "w")
+    fout.write("id,lat,lon,n_parkings\n")
     for val in sorted_Zone_NParkings:
-        strout = "%d %.6f %.6f %.6f %d %d\n"%(val[0][0],val[0][1],val[0][1],val[0][0],val[1])
-        
-    sorted_Zone_TotalParkingTime = sorted(Zone_TotalParkingTime.items(), key=lambda x:x[1], reverse=True)
-    fout = open("../input/"+provider+"_max-time500.csv","w")
-    fout.write(",lat,lon,zone_id n_parkings\n")
-    for val in sorted_Zone_TotalParkingTime:
-        strout = "%d %.6f %.6f %.6f %d %d\n"%(val[0][0],val[0][1],val[0][1],val[0][0],val[1])
+        pp.pprint(val)
+        strout = "%d,%.6f,%.6f,%d\n"%(val[0][0],val[0][1],val[0][2],val[1])
+        fout.write(strout)
 
+    sorted_Zone_TotalParkingTime = sorted(Zone_TotalParkingTime.items(), key=lambda x:x[1], reverse=True)
+    fout = open("../input/"+gv.provider+"_max-time500.csv", "w")
+    fout.write("id,lat,lon,totParkingTime\n")
+    for val in sorted_Zone_TotalParkingTime:
+        strout = "%d,%.6f,%.6f,%d\n"%(val[0][0],val[0][1],val[0][2],val[1])
+        fout.write(strout)
 
 
     print ("CVZ, discarded:", Discarded)
     print("CVZ, End")
-        
+
 main()
 
 
