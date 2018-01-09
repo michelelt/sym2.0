@@ -128,6 +128,7 @@ def dict_to_string(myDict):
 
 
 def RunSim(BestEffort,
+    algorithm_out,
     algorithm,
     AvaiableChargingStations,
     tankThreshold,
@@ -141,7 +142,7 @@ def RunSim(BestEffort,
 
     numberOfStations = len(RechargingStation_Zones)
     
-    policy, fileID, fname = foutname(BestEffort, algorithm, AvaiableChargingStations, numberOfStations, tankThreshold, walkingTreshold)
+    policy, fileID, fname = foutname(BestEffort, algorithm_out, AvaiableChargingStations, numberOfStations, tankThreshold, walkingTreshold)
     
     
     NRecharge = 0
@@ -166,7 +167,7 @@ def RunSim(BestEffort,
     WriteOutHeader(fout, {
                         "Provider": gv.provider,
                         "Policy": policy,
-                        "Algorithm": algorithm,
+                        "Algorithm": algorithm_out,
                         "ChargingStations":numberOfStations,
                         "AvaiableChargingStations":AvaiableChargingStations,
                         "TankThreshold":tankThreshold,
