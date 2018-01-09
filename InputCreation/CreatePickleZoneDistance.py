@@ -1,9 +1,8 @@
 import sys
 import os
+import pprint
 p = os.path.abspath('..')
 sys.path.append(p+"/")
-
-
 
 import pickle
 import operator
@@ -12,11 +11,13 @@ from Simulator.Classes.Car import Car
 from Simulator.Classes.Zone import Zone
 from geopy.geocoders import Nominatim
 from math import *
+
 import Simulator.Globals.SupportFunctions as sf
 import Simulator.Globals.GlobalVar as gv
 gv.init()
 sf.assingVariables()
 
+pp = pprint.PrettyPrinter(indent=4)
 
 def EvalDistance(i,j):
     Xi =  i % gv.NColumns
@@ -114,3 +115,6 @@ def main():
     return
 
 main()
+
+print (gv.MaxLat, gv.MaxLon, gv.minLat, gv.minLon, gv.city, gv.provider, gv.initDate, gv.finalDate, gv.fleetSize)
+print(gv.shiftLat500m, gv.shiftLon500m, gv.NColumns, gv.NRows, gv.MaxIndex, gv.ShiftLon, gv.ShiftLat)

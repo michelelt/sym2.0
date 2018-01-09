@@ -18,15 +18,14 @@ gv.init()
 sf.assingVariables()
 
 
-def SearchAvailableCar(RechargingStation_Zones,ZoneI,Stamp):
+def SearchAvailableCar(RechargingStation_Zones, ZoneI, Stamp):
 
     SelectedCar = "" 
     if(ZoneI.ID in RechargingStation_Zones):
         SelectedCar = ZoneI.getBestRechargedCars(Stamp)
     if(SelectedCar == ""):
         SelectedCar = ZoneI.getBestCars()
-    
-    
+
     return SelectedCar
 
 def SearchNearestBestCar(RechargingStation_Zones,DistancesFrom_Zone_Ordered,ZoneID_Zone,BookingStarting_Position,Stamp):
@@ -90,12 +89,10 @@ def ParkCar(RechargingStation_Zones, DistancesFrom_Zone_Ordered, ZoneID_Zone, Bo
             return Lvl, ToRecharge, Recharged, 0, ZoneI.ID
 
 
-
-
 def WriteOutHeader(file, parametersDict):
     
-    HeaderOreder = ["Provider", "Policy", "Algorithm", "ChargingStations", 
-     "AvaiableChargingStations", "TankThreshold", "WalkingTreshold"]
+    HeaderOreder = ["Provider", "Policy", "Algorithm", "ChargingStations", \
+                    "AvaiableChargingStations", "TankThreshold", "WalkingTreshold"]
     
     for key in HeaderOreder:
         file.write(key + ":" + str(parametersDict[key])+"\n")
@@ -106,8 +103,8 @@ def WriteOutHeader(file, parametersDict):
 def dict_to_string(myDict):
     
     mykeys = ["Type", "ToRecharge", "Recharged","ID","Lvl","Distance",
-    "Iter","Recharge", "StartRecharge", "Stamp","EventCoords",
-    "ZoneC", "Discharge", "TripDistance","FileID"]
+                "Iter","Recharge", "StartRecharge", "Stamp","EventCoords",
+                "ZoneC", "Discharge", "TripDistance","FileID"]
     
     
     outputString =""
@@ -144,7 +141,7 @@ def RunSim(BestEffort,
 
     numberOfStations = len(RechargingStation_Zones)
     
-    policy, fileID, fname = foutname(BestEffort,algorithm,AvaiableChargingStations,numberOfStations,tankThreshold,walkingTreshold)
+    policy, fileID, fname = foutname(BestEffort, algorithm, AvaiableChargingStations, numberOfStations, tankThreshold, walkingTreshold)
     
     
     NRecharge = 0
@@ -161,30 +158,22 @@ def RunSim(BestEffort,
     ZoneID_Zone = {}
     
     ReloadZonesCars(ZoneCars, ZoneID_Zone, AvaiableChargingStations)
-
     
     fout = open("../output/"+fname,"w")
                 
     fout2 = open("../output/debugproblem.txt","w")
     a = datetime.datetime.now()
     WriteOutHeader(fout, {
-    "Provider": gv.provider,
-    "Policy": policy,                          
-    "Algorithm": algorithm,
-    "ChargingStations":numberOfStations,
-    "AvaiableChargingStations":AvaiableChargingStations, 
-    "TankThreshold":tankThreshold,
-    "WalkingTreshold":  walkingTreshold})
-    
-    
-    fout.write("Type;ToRecharge;Recharged;ID;Lvl;Distance;Iter;Recharge;StartRecharge;Stamp;EventCoords;ZoneC;Discharge;TripDistance;FileID\n")
- 
-    '''print ("Dataset from",
-        datetime.datetime.fromtimestamp(int(list(Stamps_Events.keys())[0])).strftime('%Y-%m-%d %H:%M:%S'),
-        "to",
-        datetime.datetime.fromtimestamp(int(list(Stamps_Events.keys())[len(Stamps_Events)-1])).strftime('%Y-%m-%d %H:%M:%S'))  
+                        "Provider": gv.provider,
+                        "Policy": policy,
+                        "Algorithm": algorithm,
+                        "ChargingStations":numberOfStations,
+                        "AvaiableChargingStations":AvaiableChargingStations,
+                        "TankThreshold":tankThreshold,
+                        "WalkingTreshold":  walkingTreshold}
+                   )
 
-    '''
+    fout.write("Type;ToRecharge;Recharged;ID;Lvl;Distance;Iter;Recharge;StartRecharge;Stamp;EventCoords;ZoneC;Discharge;TripDistance;FileID\n")
        
     i=0
     with click.progressbar(Stamps_Events, length=len(Stamps_Events)) as bar:
@@ -209,20 +198,20 @@ def RunSim(BestEffort,
                     ZoneC = zoneIDtoCoordinates(ZoneID)
 
                     d={"Type":"s",
-                    "ToRecharge":np.NaN,
-                    "Recharged":np.NaN,
-                    "ID":ID,
-                    "Lvl":Lvl,
-                    "Distance":Distance,
-                    "Iter":Iter,
-                    "Recharge":Recharge,
-                    "StartRecharge":StartRecharge,
-                    "Stamp":Stamp,
-                    "EventCoords":Event.coordinates,
-                    "ZoneC":ZoneC,
-                    "Discharge":np.NaN,
-                    "TripDistance":np.NaN,
-                    "FileID": fileID}
+                        "ToRecharge":np.NaN,
+                        "Recharged":np.NaN,
+                        "ID":ID,
+                        "Lvl":Lvl,
+                        "Distance":Distance,
+                        "Iter":Iter,
+                        "Recharge":Recharge,
+                        "StartRecharge":StartRecharge,
+                        "Stamp":Stamp,
+                        "EventCoords":Event.coordinates,
+                        "ZoneC":ZoneC,
+                        "Discharge":np.NaN,
+                        "TripDistance":np.NaN,
+                        "FileID": fileID}
 
 
                     #print(d)

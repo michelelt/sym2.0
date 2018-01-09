@@ -17,9 +17,6 @@ import pandas as pd
 gv.init()
 sf.assingVariables()
 pp = pprint.PrettyPrinter(indent=4)
-
-
-
       
 dataset_bookings=[]
 dict_bookings={} #dictionary keys (timestamp), inside is a list of objects events. (events without timestamp)_
@@ -86,7 +83,6 @@ def main():
     fout = open("../input/"+gv.provider+"_max-parking500.csv", "w")
     fout.write("id,lat,lon,n_parkings\n")
     for val in sorted_Zone_NParkings:
-        pp.pprint(val)
         strout = "%d,%.6f,%.6f,%d\n"%(val[0][0],val[0][1],val[0][2],val[1])
         fout.write(strout)
 

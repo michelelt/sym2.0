@@ -67,7 +67,7 @@ def main():
                         
                         RechargingStation_Zones = loadRecharing(algorithm, numberOfStations)
                         p = Process(target=RunSim,args = (BestEffort,
-                                                          # algorithm.replace("_","-"),
+                                                          algorithm.replace("_","-"),
                                                           algorithm,
                                                           AvaiableChargingStations,
                                                           tankThreshold,
