@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="70fdf08d-83d7-4423-bf8f-8c4de0b64654" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/InitializeFoldersandInputs.sh" afterPath="$PROJECT_DIR$/InitializeFoldersandInputs.sh" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/InputCreation/CreatePickleZoneDistance.py" afterPath="$PROJECT_DIR$/InputCreation/CreatePickleZoneDistance.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/InputCreation/CreateValidZones.py" afterPath="$PROJECT_DIR$/InputCreation/CreateValidZones.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Simulator/MultipleRun_parallel.py" afterPath="$PROJECT_DIR$/Simulator/MultipleRun_parallel.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Simulator/RunSim.py" afterPath="$PROJECT_DIR$/Simulator/RunSim.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -63,8 +58,8 @@
       <file leaf-file-name="MultipleRun_parallel.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Simulator/MultipleRun_parallel.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="16" column="0" lean-forward="true" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+            <state relative-caret-position="543">
+              <caret line="105" column="22" lean-forward="true" selection-start-line="105" selection-start-column="22" selection-end-line="105" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -768,14 +763,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/InitializeFoldersandInputs.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="285">
-          <caret line="19" column="16" lean-forward="false" selection-start-line="19" selection-start-column="16" selection-end-line="19" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/InputCreation/CreatePickleEventi.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1326">
@@ -810,10 +797,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/InitializeFoldersandInputs.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="19" column="16" lean-forward="false" selection-start-line="19" selection-start-column="16" selection-end-line="19" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Simulator/MultipleRun_parallel.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="16" column="0" lean-forward="true" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
+        <state relative-caret-position="543">
+          <caret line="105" column="22" lean-forward="true" selection-start-line="105" selection-start-column="22" selection-end-line="105" selection-end-column="22" />
           <folding />
         </state>
       </provider>

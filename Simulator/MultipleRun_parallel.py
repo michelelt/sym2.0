@@ -102,15 +102,15 @@ def main():
         current_folder_str += current_folder[i]+"/"
     Analysis_folder =current_folder_str+"Analysis"    
 
-    output_directory ="/tmp/Carsharing_Output"
-    os.system('scp %s/Spark_Analyzer.py bigdatadb:/tmp/CarSharing_Spark_Analyzer.py'%(Analysis_folder))
-    os.system('ssh bigdatadb spark2-submit --master local --deploy-mode client /tmp/CarSharing_Spark_Analyzer.py')
-    os.system('scp bigdatadb:%s/out_analysis.txt %s/output_analysis/'%(output_directory, current_folder_str))
-
-    b = datetime.datetime.now()    
-    c = (b - aglobal).total_seconds()                
-    
-    print("Analyze data with Spark took %d seconds" %(c))
+    # output_directory ="/tmp/Carsharing_Output"
+    # os.system('scp %s/Spark_Analyzer.py bigdatadb:/tmp/CarSharing_Spark_Analyzer.py'%(Analysis_folder))
+    # os.system('ssh bigdatadb spark2-submit --master local --deploy-mode client /tmp/CarSharing_Spark_Analyzer.py')
+    # os.system('scp bigdatadb:%s/out_analysis.txt %s/output_analysis/'%(output_directory, current_folder_str))
+    #
+    # b = datetime.datetime.now()
+    # c = (b - aglobal).total_seconds()
+    #
+    # print("Analyze data with Spark took %d seconds" %(c))
 
     return 
         
