@@ -14,5 +14,5 @@ Parametri
 -Thresold serbatioio
 -poszionamento iniziale auto
 -Lunghezza traccia
-
+-todo
 
